@@ -57,132 +57,134 @@ export default function SundiataPage() {
       </section>
 
       {/* ── SECTION 2: STORY CHAPTERS ─────────────────────────────────── */}
-      <section className="bg-[#120A07] py-4">
+      <section className="bg-[#120A07] py-24 px-6 relative">
+        {/* Central vertical line guide (subtle) */}
+        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[#F6DFB6]/10 to-transparent hidden md:block" />
 
-        {/* Chapter 1 — The iron rod (image left, text right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border-b border-[#F6DFB6]/5">
-          {/* Image */}
-          <div className="relative aspect-[4/3] md:aspect-auto md:min-h-[380px]">
-            <Image
-              src="/iron-rod.png"
-              alt="Blacksmith forging an iron rod"
-              fill
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#120A07]/30" />
-          </div>
-          {/* Text */}
-          <div className="bg-[#1A0E0A] flex flex-col justify-center px-10 py-14 md:py-16">
-            <h2 className="font-pt-serif font-bold text-[#E8623A] text-[32px] md:text-[40px] leading-tight mb-6">
-              The iron rod
-            </h2>
-            <div className="space-y-4 font-inter text-[#D4B896]/75 text-[15px] leading-[1.85]">
-              <p>
-                His mother wept one night because she had to beg for baobab
-                leaves from a servant. Sundiata heard it.
-              </p>
-              <p>
-                The next morning he asked the blacksmiths for the heaviest iron
-                rod they had. He gripped it. He stood. The iron bent like a bow.
-                The ground shook.
-              </p>
-              <p>
-                He walked to the great baobab at the center of the compound,
-                tore it from the earth, and carried the whole tree to his
-                mother&apos;s door. So she would never have to ask anyone for
-                anything again.
-              </p>
+        <div className="max-w-7xl mx-auto space-y-32">
+
+          {/* Chapter 1 — The iron rod */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
+            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
+              <Image
+                src="/iron-rod.png"
+                alt="Blacksmith forging an iron rod"
+                fill
+                className="object-cover object-center"
+              />
+            </div>
+            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-ml-20 relative z-10">
+              <h2 className="font-pt-serif font-bold text-[#E8623A] text-[32px] md:text-[40px] leading-tight mb-6">
+                The iron rod
+              </h2>
+              <div className="space-y-6 font-inter text-[#D4B896] text-[16px] md:text-[17px] leading-[1.85]">
+                <p>
+                  His mother wept one night because she had to beg for baobab
+                  leaves from a servant. Sundiata heard it.
+                </p>
+                <p>
+                  The next morning he asked the blacksmiths for the heaviest iron
+                  rod they had. He gripped it. He stood. The iron bent like a bow.
+                  The ground shook.
+                </p>
+                <p>
+                  He walked to the great baobab at the center of the compound,
+                  tore it from the earth, and carried the whole tree to his
+                  mother&apos;s door. So she would never have to ask anyone for
+                  anything again.
+                </p>
+              </div>
+              {/* Decorative dot on the center line */}
+              <div className="absolute right-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#E8623A] shadow-[0_0_15px_rgba(232,98,58,0.5)] hidden md:block" />
             </div>
           </div>
-        </div>
 
-        {/* Chapter 2 — The exile (text left, image right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border-b border-[#F6DFB6]/5">
-          {/* Text card */}
-          <div className="bg-[#1A0E0A]/90 flex flex-col justify-center px-10 py-14 md:py-16">
-            <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[40px] leading-tight mb-6">
-              The exile
-            </h2>
-            <p className="font-inter text-[#D4B896]/75 text-[15px] leading-[1.85]">
-              Driven from Niani, the family wandered for years through kingdoms
-              that received them with caution and eventually reverence. Sundiata
-              trained. He grew. He became a man armies followed.
-            </p>
-          </div>
-          {/* Image */}
-          <div className="relative aspect-[4/3] md:aspect-auto md:min-h-[380px]">
-            <Image
-              src="/the-exile.png"
-              alt="A lone figure walking toward the sunset in exile"
-              fill
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[#120A07]/30" />
-          </div>
-        </div>
-
-        {/* Chapter 3 — The sorcerer of Sosso (image left, text right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border-b border-[#F6DFB6]/5">
-          {/* Image */}
-          <div className="relative aspect-[4/3] md:aspect-auto md:min-h-[380px]">
-            <Image
-              src="/the-sorcerer.png"
-              alt="The Battle of Kirina — armies marching through storms"
-              fill
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#120A07]/30" />
-          </div>
-          {/* Text */}
-          <div className="bg-[#1A0E0A] flex flex-col justify-center px-10 py-14 md:py-16">
-            <h2 className="font-pt-serif font-bold text-[#E8623A] text-[32px] md:text-[40px] leading-tight mb-6">
-              The sorcerer of Sosso
-            </h2>
-            <div className="space-y-4 font-inter text-[#D4B896]/75 text-[15px] leading-[1.85]">
-              <p>
-                Soumaoro Kanté had taken Niani, burned the Manden, and scattered
-                its people. No weapon could touch him.
+          {/* Chapter 2 — The exile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
+            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-mr-20 relative z-10 order-2 md:order-1">
+              <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[40px] leading-tight mb-6">
+                The exile
+              </h2>
+              <p className="font-inter text-[#D4B896] text-[16px] md:text-[17px] leading-[1.85]">
+                Driven from Niani, the family wandered for years through kingdoms
+                that received them with caution and eventually reverence. Sundiata
+                trained. He grew. He became a man armies followed.
               </p>
-              <p>
-                Until Sundiata&apos;s sister, held captive for years, escaped
-                carrying a secret she had spent years learning. At the Battle of
-                Krina, Sundiata used it. Soumaoro fled into the mountain and was
-                never seen again.
-              </p>
+              {/* Decorative dot on the center line */}
+              <div className="absolute left-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#F6DFB6]/60 shadow-[0_0_15px_rgba(246,223,182,0.3)] hidden md:block" />
+            </div>
+            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
+              <Image
+                src="/the-exile.png"
+                alt="A lone figure walking toward the sunset in exile"
+                fill
+                className="object-cover object-center"
+              />
             </div>
           </div>
-        </div>
 
-        {/* Chapter 4 — The empire he built (text left, image right) */}
-        <div className="grid grid-cols-1 md:grid-cols-2">
-          {/* Text card */}
-          <div className="bg-[#1A0E0A]/90 flex flex-col justify-center px-10 py-14 md:py-16">
-            <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[40px] leading-tight mb-6">
-              The empire he built
-            </h2>
-            <div className="space-y-4 font-inter text-[#D4B896]/75 text-[15px] leading-[1.85]">
-              <p>
-                After victory, Sundiata gathered the twelve kings and wrote the
-                Manden Charter. Rights for ordinary people. Protection for the
-                voiceless. Scholars call it one of the earliest human rights
-                declarations in recorded history.
-              </p>
-              <p className="text-[#E8623A] text-[14px] italic">
-                The Mali Empire he founded became one of the wealthiest in the
-                medieval world.
-              </p>
+          {/* Chapter 3 — The sorcerer of Sosso */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
+            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
+              <Image
+                src="/the-sorcerer.png"
+                alt="The Battle of Kirina — armies marching through storms"
+                fill
+                className="object-cover object-center"
+              />
+            </div>
+            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-ml-20 relative z-10">
+              <h2 className="font-pt-serif font-bold text-[#E8623A] text-[32px] md:text-[40px] leading-tight mb-6">
+                The sorcerer of Sosso
+              </h2>
+              <div className="space-y-6 font-inter text-[#D4B896] text-[16px] md:text-[17px] leading-[1.85]">
+                <p>
+                  Soumaoro Kanté had taken Niani, burned the Manden, and scattered
+                  its people. No weapon could touch him.
+                </p>
+                <p>
+                  Until Sundiata&apos;s sister, held captive for years, escaped
+                  carrying a secret she had spent years learning. At the Battle of
+                  Krina, Sundiata used it. Soumaoro fled into the mountain and was
+                  never seen again.
+                </p>
+              </div>
+              {/* Decorative dot on the center line */}
+              <div className="absolute right-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#E8623A] shadow-[0_0_15px_rgba(232,98,58,0.5)] hidden md:block" />
             </div>
           </div>
-          {/* Image */}
-          <div className="relative aspect-[4/3] md:aspect-auto md:min-h-[380px]">
-            <Image
-              src="/the-empire-built.png"
-              alt="Sundiata on his throne surrounded by kings"
-              fill
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[#120A07]/30" />
+
+          {/* Chapter 4 — The empire he built */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
+            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-mr-20 relative z-10 order-2 md:order-1">
+              <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[40px] leading-tight mb-6">
+                The empire he built
+              </h2>
+              <div className="space-y-6 font-inter text-[#D4B896] text-[16px] md:text-[17px] leading-[1.85]">
+                <p>
+                  After victory, Sundiata gathered the twelve kings and wrote the
+                  Manden Charter. Rights for ordinary people. Protection for the
+                  voiceless. Scholars call it one of the earliest human rights
+                  declarations in recorded history.
+                </p>
+                <p className="text-[#E8623A] font-medium">
+                  The Mali Empire he founded became one of the wealthiest in the
+                  medieval world.
+                </p>
+              </div>
+              {/* Decorative dot on the center line */}
+              <div className="absolute left-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#F6DFB6]/60 shadow-[0_0_15px_rgba(246,223,182,0.3)] hidden md:block" />
+            </div>
+            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
+              <Image
+                src="/the-empire-built.png"
+                alt="Sundiata on his throne surrounded by kings"
+                fill
+                className="object-cover object-center"
+              />
+            </div>
           </div>
+
         </div>
       </section>
 
