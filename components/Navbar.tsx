@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { label: 'About Anthrovian', href: '/about' },
@@ -26,7 +27,12 @@ const Navbar = () => {
   return (
     <>
       {/* ── MAIN NAV BAR ───────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[linear-gradient(180deg,rgba(54,32,27,0.9)_0%,rgba(54,32,27,0)_100%)]">
+      <motion.nav 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed top-0 left-0 right-0 z-50 bg-[linear-gradient(180deg,rgba(54,32,27,0.9)_0%,rgba(54,32,27,0)_100%)]"
+      >
         <div className="max-w-7xl mx-auto px-5 lg:px-12">
           <div className="flex justify-between items-center h-20 md:h-24">
 
@@ -70,63 +76,78 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* ── MOBILE DRAWER OVERLAY ──────────────────────────────────── */}
-      {/* Backdrop */}
-      <div
-        onClick={() => setIsOpen(false)}
-        className={`md:hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        aria-hidden="true"
-      />
-
-      {/* Drawer panel */}
-      <div
-        className={`md:hidden fixed top-0 right-0 bottom-0 z-[70] w-[80vw] max-w-[320px] bg-[#1E0F0C] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Navigation menu"
-      >
-        {/* Drawer header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-[#F6DFB6]/10">
-          <Link href="/" onClick={() => setIsOpen(false)}>
-            <Image
-              src="/logo/anthrovian-logo.svg"
-              alt="Anthrovian Logo"
-              width={130}
-              height={36}
-              className="h-6 w-auto"
-            />
-          </Link>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="p-2 rounded-md text-[#F6DFB6] hover:text-white focus:outline-none transition-colors"
-            aria-label="Close navigation menu"
-          >
-            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        {/* Drawer nav links */}
-        <nav className="flex flex-col gap-3 px-6 pt-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="text-[#F6DFB6] font-inter font-medium text-[16px] px-5 py-3 rounded-full border border-[#F6DFB6]/20 hover:bg-[#F6DFB6]/10 transition-all text-center"
+              className="md:hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
+              aria-hidden="true"
+            />
+
+            {/* Drawer panel */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="md:hidden fixed top-0 right-0 bottom-0 z-[70] w-[80vw] max-w-[320px] bg-[#1E0F0C] flex flex-col shadow-2xl"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation menu"
             >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
+              {/* Drawer header */}
+              <div className="flex items-center justify-between px-6 py-5 border-b border-[#F6DFB6]/10">
+                <Link href="/" onClick={() => setIsOpen(false)}>
+                  <Image
+                    src="/logo/anthrovian-logo.svg"
+                    alt="Anthrovian Logo"
+                    width={130}
+                    height={36}
+                    className="h-6 w-auto"
+                  />
+                </Link>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 rounded-md text-[#F6DFB6] hover:text-white focus:outline-none transition-colors"
+                  aria-label="Close navigation menu"
+                >
+                  <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Drawer nav links */}
+              <nav className="flex flex-col gap-3 px-6 pt-8">
+                {navLinks.map((link, idx) => (
+                  <motion.div
+                    key={link.href}
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.1 + idx * 0.1 }}
+                  >
+                    <Link
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className="text-[#F6DFB6] font-inter font-medium text-[16px] px-5 py-3 rounded-full border border-[#F6DFB6]/20 hover:bg-[#F6DFB6]/10 transition-all text-center block"
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                ))}
+              </nav>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };

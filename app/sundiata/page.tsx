@@ -1,19 +1,42 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { motion, Variants } from 'framer-motion';
 
-export const metadata: Metadata = {
-  title: 'Who is Sundiata? | Anthrovian',
-  description:
-    'The Epic of Sundiata — born unable to walk, exiled, and destined to found the Mali Empire. Now it is your turn to shape the legend.',
+// Metadata removed for 'use client' compatibility
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+  }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
 };
 
 export default function SundiataPage() {
   return (
-    <div className="bg-[#120A07] min-h-screen">
+    <div className="bg-[#120A07] min-h-screen overflow-hidden">
 
       {/* ── SECTION 1: HERO ───────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+      >
         {/* Background */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -27,7 +50,12 @@ export default function SundiataPage() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 text-center px-6 max-w-3xl mx-auto flex flex-col items-center">
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="relative z-10 text-center px-6 max-w-3xl mx-auto flex flex-col items-center"
+        >
           <h1 className="font-pt-serif font-bold leading-none tracking-tight">
             <span className="block text-[56px] md:text-[90px] text-white uppercase">
               Who is
@@ -38,23 +66,36 @@ export default function SundiataPage() {
           </h1>
 
           {/* Vertical divider */}
-          <div className="w-px h-16 bg-[#F6DFB6]/30 my-10" />
+          <motion.div 
+            initial={{ height: 0 }}
+            animate={{ height: 64 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="w-px h-16 bg-[#F6DFB6]/30 my-10" 
+          />
 
           {/* Intro copy */}
           <div className="space-y-5 font-inter text-[#D4B896]/80 text-[16px] md:text-[18px] leading-[1.85] text-center">
-            <p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2, duration: 0.8 }}
+            >
               Around 1217, in the heart of the Manden, a child was born who
               could not walk. His name was Maghan Sundiata Keita. A hunter had
               prophesied his birth years before it happened.
-            </p>
-            <p>
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.4, duration: 0.8 }}
+            >
               His mother, Sogolon, arrived carrying a power no one in the court
               understood. And for the first seven years of his life, Sundiata
               sat in the dust while the world laughed.
-            </p>
+            </motion.p>
           </div>
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
       {/* ── SECTION 2: STORY CHAPTERS ─────────────────────────────────── */}
       <section className="bg-[#120A07] py-24 px-6 relative">
@@ -64,16 +105,22 @@ export default function SundiataPage() {
         <div className="max-w-7xl mx-auto space-y-32">
 
           {/* Chapter 1 — The iron rod */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
-            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"
+          >
+            <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
               <Image
                 src="/iron-rod.png"
                 alt="Blacksmith forging an iron rod"
                 fill
                 className="object-cover object-center"
               />
-            </div>
-            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-ml-20 relative z-10">
+            </motion.div>
+            <motion.div variants={fadeInUp} className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-ml-20 relative z-10">
               <h2 className="font-pt-serif font-bold text-[#E8623A] text-[32px] md:text-[40px] leading-tight mb-6">
                 The iron rod
               </h2>
@@ -96,12 +143,18 @@ export default function SundiataPage() {
               </div>
               {/* Decorative dot on the center line */}
               <div className="absolute right-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#E8623A] shadow-[0_0_15px_rgba(232,98,58,0.5)] hidden md:block" />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Chapter 2 — The exile */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
-            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-mr-20 relative z-10 order-2 md:order-1">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"
+          >
+            <motion.div variants={fadeInUp} className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-mr-20 relative z-10 order-2 md:order-1">
               <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[40px] leading-tight mb-6">
                 The exile
               </h2>
@@ -112,28 +165,34 @@ export default function SundiataPage() {
               </p>
               {/* Decorative dot on the center line */}
               <div className="absolute left-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#F6DFB6]/60 shadow-[0_0_15px_rgba(246,223,182,0.3)] hidden md:block" />
-            </div>
-            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
+            </motion.div>
+            <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
               <Image
                 src="/the-exile.png"
                 alt="A lone figure walking toward the sunset in exile"
                 fill
                 className="object-cover object-center"
               />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Chapter 3 — The sorcerer of Sosso */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
-            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"
+          >
+            <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
               <Image
                 src="/the-sorcerer.png"
                 alt="The Battle of Kirina — armies marching through storms"
                 fill
                 className="object-cover object-center"
               />
-            </div>
-            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-ml-20 relative z-10">
+            </motion.div>
+            <motion.div variants={fadeInUp} className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-ml-20 relative z-10">
               <h2 className="font-pt-serif font-bold text-[#E8623A] text-[32px] md:text-[40px] leading-tight mb-6">
                 The sorcerer of Sosso
               </h2>
@@ -151,12 +210,18 @@ export default function SundiataPage() {
               </div>
               {/* Decorative dot on the center line */}
               <div className="absolute right-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#E8623A] shadow-[0_0_15px_rgba(232,98,58,0.5)] hidden md:block" />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Chapter 4 — The empire he built */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative">
-            <div className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-mr-20 relative z-10 order-2 md:order-1">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={staggerContainer}
+            className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative"
+          >
+            <motion.div variants={fadeInUp} className="bg-[#1A0E0A]/80 backdrop-blur-md border border-[#F6DFB6]/10 rounded-[32px] p-10 md:p-14 shadow-xl md:-mr-20 relative z-10 order-2 md:order-1">
               <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[40px] leading-tight mb-6">
                 The empire he built
               </h2>
@@ -174,22 +239,28 @@ export default function SundiataPage() {
               </div>
               {/* Decorative dot on the center line */}
               <div className="absolute left-[-45px] top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#F6DFB6]/60 shadow-[0_0_15px_rgba(246,223,182,0.3)] hidden md:block" />
-            </div>
-            <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
+            </motion.div>
+            <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
               <Image
                 src="/the-empire-built.png"
                 alt="Sundiata on his throne surrounded by kings"
                 fill
                 className="object-cover object-center"
               />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
         </div>
       </section>
 
       {/* ── SECTION 3: WHY HIS STORY STILL MATTERS ───────────────────── */}
-      <section className="bg-[#120A07] py-24 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="bg-[#120A07] py-24 px-6"
+      >
         <div className="max-w-2xl mx-auto text-center">
           {/* Flame icon */}
           <div className="mb-6 flex justify-center">
@@ -237,7 +308,7 @@ export default function SundiataPage() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
     </div>
   );

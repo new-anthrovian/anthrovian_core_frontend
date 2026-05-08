@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { motion, Variants } from 'framer-motion';
 
 const spirits = [
   {
@@ -39,46 +39,77 @@ const spirits = [
   },
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
 const ThreeSpirits = () => {
   return (
-    <section className="bg-[#1A110F] py-24 px-6">
-      <div className="max-w-7xl mx-auto text-center mb-16">
-        <h2 className="font-pt-serif text-[40px] md:text-[54px] leading-tight text-[#F6DFB6] mb-6">
-          The Three Spirits
-        </h2>
-        <p className="font-inter text-[#F6DFB6]/80 text-[16px] md:text-[18px] max-w-2xl mx-auto leading-relaxed">
-          Before you begin, reflect on what drives you. The paths you favor will shape the outcome of the tale.
-        </p>
-      </div>
+    <section className="bg-[#1A110F] py-24 px-6 overflow-hidden">
+      <motion.div 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="max-w-7xl mx-auto"
+      >
+        <div className="text-center mb-16">
+          <motion.h2 variants={itemVariants} className="font-pt-serif text-[40px] md:text-[54px] leading-tight text-[#F6DFB6] mb-6">
+            The Three Spirits
+          </motion.h2>
+          <motion.p variants={itemVariants} className="font-inter text-[#F6DFB6]/80 text-[16px] md:text-[18px] max-w-2xl mx-auto leading-relaxed">
+            Before you begin, reflect on what drives you. The paths you favor will shape the outcome of the tale.
+          </motion.p>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {spirits.map((spirit, index) => (
-          <div
-            key={index}
-            className={`relative group bg-[#2A1A17]/80 backdrop-blur-md rounded-[32px] p-10 border ${spirit.borderColor} transition-all duration-500 hover:transform hover:-translate-y-2 overflow-hidden`}
-          >
-            {/* Glow Effect */}
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${spirit.glow} to-transparent blur-3xl opacity-50 group-hover:opacity-100 transition-opacity`} />
-            
-            <div className="relative z-10 flex flex-col items-center text-center">
-              {/* Icon Container */}
-              <div className={`w-20 h-20 rounded-full border ${spirit.borderColor} flex items-center justify-center mb-8 bg-[#2A1A17]/50 backdrop-blur-sm shadow-inner`}>
-                {spirit.icon}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {spirits.map((spirit, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              className={`relative group bg-[#2A1A17]/80 backdrop-blur-md rounded-[32px] p-10 border ${spirit.borderColor} transition-all duration-500 hover:transform hover:-translate-y-2 overflow-hidden`}
+            >
+              {/* Glow Effect */}
+              <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${spirit.glow} to-transparent blur-3xl opacity-50 group-hover:opacity-100 transition-opacity`} />
+              
+              <div className="relative z-10 flex flex-col items-center text-center">
+                {/* Icon Container */}
+                <div className={`w-20 h-20 rounded-full border ${spirit.borderColor} flex items-center justify-center mb-8 bg-[#2A1A17]/50 backdrop-blur-sm shadow-inner`}>
+                  {spirit.icon}
+                </div>
+
+                {/* Title */}
+                <h3 className="font-pt-serif text-[28px] text-[#F6DFB6] mb-4">
+                  {spirit.title}
+                </h3>
+
+                {/* Description */}
+                <p className="font-inter text-[#F6DFB6]/60 text-[15px] leading-relaxed">
+                  {spirit.description}
+                </p>
               </div>
-
-              {/* Title */}
-              <h3 className="font-pt-serif text-[28px] text-[#F6DFB6] mb-4">
-                {spirit.title}
-              </h3>
-
-              {/* Description */}
-              <p className="font-inter text-[#F6DFB6]/60 text-[15px] leading-relaxed">
-                {spirit.description}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 };

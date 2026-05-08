@@ -1,18 +1,41 @@
+'use client';
+
 import Image from 'next/image';
 import type { Metadata } from 'next';
+import { motion, Variants } from 'framer-motion';
 
-export const metadata: Metadata = {
-  title: 'About Anthrovian | Africa Has Always Been a Continent of Stories',
-  description:
-    'Anthrovian is an interactive African mythology platform. Every myth is a world you enter, a story you shape, a mirror that shows you who you are.',
+// Metadata removed for 'use client' compatibility
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+  }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
 };
 
 export default function AboutPage() {
   return (
-    <div className="bg-[#0D0806] min-h-screen">
+    <div className="bg-[#0D0806] min-h-screen overflow-hidden">
 
       {/* ── SECTION 1: HERO ───────────────────────────────────────────── */}
-      <section className="relative h-[70vh] min-h-[500px] flex flex-col items-center justify-center overflow-hidden">
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5 }}
+        className="relative h-[70vh] min-h-[500px] flex flex-col items-center justify-center overflow-hidden"
+      >
         {/* Background image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -27,7 +50,12 @@ export default function AboutPage() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 text-center px-6 flex flex-col items-center">
+        <motion.div 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.5, duration: 1 }}
+          className="relative z-10 text-center px-6 flex flex-col items-center"
+        >
           <h1 className="font-pt-serif font-bold tracking-wide">
             <span className="block text-[52px] md:text-[80px] leading-tight text-white uppercase">
               About
@@ -39,33 +67,45 @@ export default function AboutPage() {
           <p className="font-inter text-[#F6DFB6]/80 text-[18px] md:text-[20px] mt-6 max-w-xl">
             Africa has always been a continent of stories.
           </p>
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
       {/* ── SECTION 2: INTRO TEXT ─────────────────────────────────────── */}
-      <section className="bg-[#0D0806] py-24 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-24 px-6"
+      >
         <div className="max-w-2xl mx-auto text-center space-y-8">
-          <p className="font-inter text-[#D4B896] text-[17px] md:text-[19px] leading-[1.9]">
+          <motion.p variants={fadeInUp} className="font-inter text-[#D4B896] text-[17px] md:text-[19px] leading-[1.9]">
             Not stories that sit quietly on pages. Stories that move. Told by
             firelight. Passed from mouth to ear. Carried across generations in
             the voices of griots who believed that memory lives in sound, not
             ink.
-          </p>
-          <p className="font-inter text-[#D4B896] text-[17px] md:text-[19px] leading-[1.9]">
+          </motion.p>
+          <motion.p variants={fadeInUp} className="font-inter text-[#D4B896] text-[17px] md:text-[19px] leading-[1.9]">
             Those stories never stopped being extraordinary. The world just
             stopped listening.
-          </p>
-          <p className="font-pt-serif font-bold text-[#E8623A] text-[20px] md:text-[22px] italic">
+          </motion.p>
+          <motion.p variants={fadeInUp} className="font-pt-serif font-bold text-[#E8623A] text-[20px] md:text-[22px] italic">
             Anthrovian exists to change that.
-          </p>
+          </motion.p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 3: WHAT WE ARE ────────────────────────────────────── */}
-      <section className="bg-[#0D0806] py-20 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-20 px-6"
+      >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           {/* Text */}
-          <div className="order-2 md:order-1">
+          <motion.div variants={fadeInUp} className="order-2 md:order-1">
             <p className="font-inter text-[#E8623A]/70 text-[11px] tracking-[3px] uppercase mb-4">
               The Experience
             </p>
@@ -82,9 +122,9 @@ export default function AboutPage() {
                 Not a museum. Not a textbook. A living experience.
               </p>
             </div>
-          </div>
+          </motion.div>
           {/* Image */}
-          <div className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
+          <motion.div variants={fadeInUp} className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
               src="/experience.png"
               alt="Hands holding a phone displaying African mythology interactive world"
@@ -92,15 +132,21 @@ export default function AboutPage() {
               className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-l from-[#0D0806]/20 to-transparent" />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 4: HOW WE BUILD ───────────────────────────────────── */}
-      <section className="bg-[#0D0806] py-20 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-20 px-6"
+      >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           {/* Image */}
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
+          <motion.div variants={fadeInUp} className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
               src="/process.png"
               alt="African griot hands with traditional instruments"
@@ -108,9 +154,9 @@ export default function AboutPage() {
               className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#0D0806]/20 to-transparent" />
-          </div>
+          </motion.div>
           {/* Text */}
-          <div>
+          <motion.div variants={fadeInUp}>
             <p className="font-inter text-[#E8623A]/70 text-[11px] tracking-[3px] uppercase mb-4">
               The Process
             </p>
@@ -125,15 +171,21 @@ export default function AboutPage() {
             <p className="font-inter text-[#D4B896]/60 text-[15px] leading-relaxed">
               We call this the Living Canon.
             </p>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 5: WHO WE BUILD FOR ───────────────────────────────── */}
-      <section className="bg-[#0D0806] py-20 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-20 px-6"
+      >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           {/* Text */}
-          <div className="order-2 md:order-1">
+          <motion.div variants={fadeInUp} className="order-2 md:order-1">
             <p className="font-inter text-[#E8623A]/70 text-[11px] tracking-[3px] uppercase mb-4">
               The Audience
             </p>
@@ -167,9 +219,9 @@ export default function AboutPage() {
                 itself.
               </p>
             </div>
-          </div>
+          </motion.div>
           {/* Image */}
-          <div className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
+          <motion.div variants={fadeInUp} className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
               src="/audience.png"
               alt="African mother and daughter sharing a smartphone"
@@ -177,12 +229,18 @@ export default function AboutPage() {
               className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-l from-[#0D0806]/20 to-transparent" />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 6: HUMAN PLATFORM STATEMENT ──────────────────────── */}
-      <section className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5"
+      >
         <div className="max-w-3xl mx-auto text-center">
           {/* Globe icon */}
           <div className="w-12 h-12 mx-auto mb-8 opacity-40">
@@ -198,13 +256,19 @@ export default function AboutPage() {
             It begins in Africa because that is where humanity begins.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 7: A CONTINENT OF CREATORS ───────────────────────── */}
-      <section className="bg-[#0D0806] py-20 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-20 px-6"
+      >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           {/* Image */}
-          <div className="relative rounded-2xl overflow-hidden aspect-[4/3]">
+          <motion.div variants={fadeInUp} className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
               src="/vision.png"
               alt="African creative writer at a laptop"
@@ -212,9 +276,9 @@ export default function AboutPage() {
               className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#0D0806]/20 to-transparent" />
-          </div>
+          </motion.div>
           {/* Text */}
-          <div>
+          <motion.div variants={fadeInUp}>
             <p className="font-inter text-[#E8623A]/70 text-[11px] tracking-[3px] uppercase mb-4">
               The Vision
             </p>
@@ -246,15 +310,21 @@ export default function AboutPage() {
                 What Africa builds through us.
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 8: WHERE WE ARE GOING ────────────────────────────── */}
-      <section className="bg-[#0D0806] py-20 px-6">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-20 px-6"
+      >
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
           {/* Text */}
-          <div className="order-2 md:order-1">
+          <motion.div variants={fadeInUp} className="order-2 md:order-1">
             <p className="font-inter text-[#E8623A]/70 text-[11px] tracking-[3px] uppercase mb-4">
               The Future
             </p>
@@ -275,9 +345,9 @@ export default function AboutPage() {
                 this generation.
               </p>
             </div>
-          </div>
+          </motion.div>
           {/* Image */}
-          <div className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
+          <motion.div variants={fadeInUp} className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
               src="/the-future.jpg"
               alt="African mythological warrior in vivid digital art"
@@ -285,12 +355,18 @@ export default function AboutPage() {
               className="object-cover object-center"
             />
             <div className="absolute inset-0 bg-gradient-to-l from-[#0D0806]/20 to-transparent" />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 9: THE MANDEN STATEMENT ──────────────────────────── */}
-      <section className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5"
+      >
         <div className="max-w-2xl mx-auto text-center space-y-4">
           <p className="font-inter text-[#D4B896]/40 text-[13px] tracking-[2px] uppercase">
             The world has had Marvel. It has had Studio Ghibli. It has had
@@ -300,10 +376,16 @@ export default function AboutPage() {
             Now it gets the Manden.
           </p>
         </div>
-      </section>
+      </motion.section>
 
       {/* ── SECTION 10: THE BELIEF AT THE CENTER ─────────────────────── */}
-      <section className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
+        className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5"
+      >
         <div className="max-w-2xl mx-auto text-center">
           <p className="font-inter text-[#E8623A] text-[11px] tracking-[3px] uppercase mb-8">
             The Belief at the Center of Everything
@@ -321,7 +403,7 @@ export default function AboutPage() {
             The ancestors answer through the phone in your hand.
           </p>
         </div>
-      </section>
+      </motion.section>
 
     </div>
   );
