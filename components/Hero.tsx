@@ -45,7 +45,7 @@ const Hero = () => {
 
         {/* Secondary Link */}
         <Link 
-          href="#who" 
+          href="/sundiata" 
           className="text-[#F6DFB6]/80 font-inter text-[14px] hover:text-[#F6DFB6] transition-colors border-b border-[#F6DFB6]/20 pb-1"
         >
           Who is Sundiata
