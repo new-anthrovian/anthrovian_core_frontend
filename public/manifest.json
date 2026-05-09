@@ -1,0 +1,18 @@
+{
+  "name": "Anthrovian",
+  "short_name": "Anthrovian",
+  "description": "Interactive African Mythology Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#120A07",
+  "theme_color": "#E8623A",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

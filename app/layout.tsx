@@ -26,8 +26,26 @@ const ptSerif = PT_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Anthrovian",
-  description: "Anthrovian - Explore the future.",
+  title: "Anthrovian | African Mythology Interactive Platform",
+  description: "Enter the world of African mythology. Every myth is a world you enter, a story you shape.",
+  icons: {
+    apple: "/logo/icon.svg",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Anthrovian",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#E8623A",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
