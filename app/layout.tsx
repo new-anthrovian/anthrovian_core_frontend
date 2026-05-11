@@ -26,6 +26,7 @@ const ptSerif = PT_Serif({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://anthrovian.com"),
   title: "Anthrovian | African Mythology Interactive Platform",
   description: "Enter the world of African mythology. Every myth is a world you enter, a story you shape.",
   icons: {
