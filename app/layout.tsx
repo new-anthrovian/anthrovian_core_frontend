@@ -31,7 +31,8 @@ export const metadata: Metadata = {
   title: "Anthrovian | African Mythology Interactive Platform",
   description: "Enter the world of African mythology. Every myth is a world you enter, a story you shape.",
   icons: {
-    apple: "/logo/icon.svg",
+    icon: "/icon.svg",
+    apple: "/icon.svg",
   },
   appleWebApp: {
     capable: true,
