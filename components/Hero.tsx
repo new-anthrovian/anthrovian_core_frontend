@@ -2,8 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const Hero = () => {
+  const router = useRouter();
   return (
     <section className="relative h-screen min-h-[800px] flex items-center justify-center overflow-hidden">
       {/* Background Video */}
@@ -59,7 +61,9 @@ const Hero = () => {
         </motion.p>
 
         {/* CTA Button */}
-        <motion.button 
+        <motion.button
+          type="button"
+          onClick={() => router.push('/awaken')}
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 1.1, duration: 0.5 }}
