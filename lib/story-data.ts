@@ -28,8 +28,17 @@ import type {
 const RAW_VIDEO_BASE = process.env.NEXT_PUBLIC_VIDEO_BASE ?? "/videos";
 export const VIDEO_BASE = RAW_VIDEO_BASE.replace(/\/+$/, "");
 
-const v = (name: string) => `${VIDEO_BASE}/${name}`;
-const poster = (name: string) => `${VIDEO_BASE}/posters/${name}`;
+/**
+ * Cache-bust query string appended to every asset URL. CDN cache headers
+ * on R2 are `immutable, max-age=1y`, so when we re-encode/re-upload
+ * videos to the same key we need a new query string to force browsers
+ * and the edge cache to refetch. Bump this whenever videos are
+ * re-encoded or replaced at the same key.
+ */
+const ASSET_VERSION = "2";
+
+const v = (name: string) => `${VIDEO_BASE}/${name}?v=${ASSET_VERSION}`;
+const poster = (name: string) => `${VIDEO_BASE}/posters/${name}?v=${ASSET_VERSION}`;
 
 /* ---------- Portal (the /awaken entry video) ---------- */
 

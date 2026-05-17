@@ -27,13 +27,13 @@ const Navbar = () => {
   return (
     <>
       {/* ── MAIN NAV BAR ───────────────────────────────────────────── */}
-      <motion.nav 
+      <motion.nav
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="fixed top-0 left-0 right-0 z-50 bg-[linear-gradient(180deg,rgba(54,32,27,0.9)_0%,rgba(54,32,27,0)_100%)]"
       >
-        <div className="max-w-7xl mx-auto px-5 lg:px-12">
+        <div className="max-w-8xl mx-auto px-5 lg:px-12">
           <div className="flex justify-between items-center h-20 md:h-24">
 
             {/* Logo — smaller on mobile */}
@@ -42,9 +42,9 @@ const Navbar = () => {
                 <Image
                   src="/logo/anthrovian-logo.svg"
                   alt="Anthrovian Logo"
-                  width={180}
-                  height={48}
-                  className="h-7 w-auto md:h-10"
+                  width={160}
+                  height={32}
+                  className="h-6 w-auto md:h-8"
                   priority
                 />
               </Link>
@@ -109,9 +109,9 @@ const Navbar = () => {
                   <Image
                     src="/logo/anthrovian-logo.svg"
                     alt="Anthrovian Logo"
-                    width={130}
-                    height={36}
-                    className="h-6 w-auto"
+                    width={110}
+                    height={30}
+                    className="h-5 w-auto"
                   />
                 </Link>
                 <button
