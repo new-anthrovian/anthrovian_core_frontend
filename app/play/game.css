@@ -30,15 +30,35 @@
   font-family: var(--font-pt-serif), Georgia, "Times New Roman", serif;
 }
 
-/* ---------- full-bleed video ---------- */
+/* ---------- video framing ---------- */
 
+/* The actual video element. `contain` (not `cover`) so nothing in
+   the frame gets cropped on a phone — letterbox/pillarbox bars fill
+   with the blurred poster backdrop below. */
 .anthro-video {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  background: #000;
+  object-fit: contain;
+  background: transparent;
+  z-index: 1;
+}
+
+/* Cinematic letterbox filler — a blurred, dimmed copy of the scene's
+   poster image fills the area around a contained video. Industry-
+   standard pattern for cross-orientation playback (Reels / TikTok /
+   Netflix mobile). Scaled past 100% so the blur edge isn't visible. */
+.anthro-video-backdrop {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.15);
+  filter: blur(36px) brightness(0.42) saturate(0.85);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .anthro-scrim {
