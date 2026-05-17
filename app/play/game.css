@@ -1,0 +1,282 @@
+/* =============================================================
+   "Sundiata's Rise" — game-scoped styles ("Sacred Grandeur").
+   globals.css is off-limits; everything game-specific lives here
+   and is imported only by the game client components.
+   ============================================================= */
+
+.anthro-game {
+  /* palette — matches the existing marketing site */
+  --night: #1a110f;
+  --night-2: #1e0f0c;
+  --bark: #2a1a17;
+  --brown: #36201b;
+  --cream: #f6dfb6;
+  --cream-dim: rgba(246, 223, 182, 0.62);
+  --orange: #f46c39;
+  --gold: #ffd989;
+  --nyama: #60a5fa;
+
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--night);
+  color: var(--cream);
+  overflow: hidden;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.anthro-serif {
+  font-family: var(--font-pt-serif), Georgia, "Times New Roman", serif;
+}
+
+/* ---------- full-bleed video ---------- */
+
+.anthro-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+}
+
+.anthro-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 6, 5, 0.92) 0%,
+    rgba(10, 6, 5, 0.35) 38%,
+    rgba(10, 6, 5, 0) 62%
+  );
+  pointer-events: none;
+}
+
+/* ---------- carved frame (mud-cloth border) ---------- */
+
+.carved-frame {
+  position: relative;
+  border: 1px solid rgba(246, 223, 182, 0.18);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(246, 223, 182, 0.07),
+    inset 0 -2px 8px rgba(0, 0, 0, 0.55),
+    0 8px 28px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(160deg, var(--bark), var(--night-2));
+}
+
+.carved-frame::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(246, 223, 182, 0.1);
+  border-radius: 3px;
+  pointer-events: none;
+}
+
+/* ---------- carved choice buttons ---------- */
+
+.carved-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  padding: 1rem 1.15rem;
+  border-radius: 5px;
+  font-family: var(--font-pt-serif), Georgia, serif;
+  font-size: 1.02rem;
+  line-height: 1.5;
+  color: var(--cream);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.6);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease,
+    filter 0.25s ease;
+  /* faint fractal woodgrain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.18' numOctaves='3' seed='7'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-blend-mode: overlay;
+}
+
+/* wood — the default carved button */
+.carved-btn--wood {
+  background-color: #2a1a17;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.18' numOctaves='3' seed='7'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E"),
+    linear-gradient(165deg, #34221c 0%, #1e0f0c 100%);
+  box-shadow:
+    inset 1px 1px 0 rgba(246, 223, 182, 0.09),
+    inset -2px -3px 7px rgba(0, 0, 0, 0.62);
+}
+.carved-btn--wood:hover {
+  transform: scale(1.02);
+  color: #fff2d8;
+  box-shadow:
+    inset 1px 1px 0 rgba(246, 223, 182, 0.12),
+    inset -2px -3px 7px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(244, 108, 57, 0.55),
+    0 0 22px rgba(244, 108, 57, 0.32);
+}
+
+/* iron — Scene 3 only (the iron-rod test of royal strength) */
+.carved-btn--iron {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  letter-spacing: 0.01em;
+  border-radius: 2px;
+  background-color: #1c1c22;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.035) 0px,
+      rgba(255, 255, 255, 0.035) 1px,
+      transparent 1px,
+      transparent 3px
+    ),
+    linear-gradient(165deg, #34343d 0%, #121218 100%);
+  box-shadow:
+    inset 1px 1px 0 rgba(220, 230, 255, 0.1),
+    inset -2px -3px 6px rgba(0, 0, 0, 0.78);
+}
+.carved-btn--iron:hover {
+  transform: scale(1.015);
+  color: #eaf2ff;
+  box-shadow:
+    inset 1px 1px 0 rgba(220, 230, 255, 0.16),
+    inset -2px -3px 6px rgba(0, 0, 0, 0.78),
+    0 0 0 1px rgba(96, 165, 250, 0.6),
+    0 0 24px rgba(96, 165, 250, 0.32);
+}
+.carved-btn--iron:active {
+  filter: brightness(1.35);
+}
+
+.carved-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+/* ---------- variable visualizer ---------- */
+
+.var-symbol {
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease;
+  opacity: 0.28;
+}
+.var-symbol--lit {
+  opacity: 1;
+}
+.var-symbol--pulse {
+  animation: var-pulse 1.4s ease-in-out;
+}
+@keyframes var-pulse {
+  0% {
+    opacity: 0.28;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  35% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+  100% {
+    opacity: 0.5;
+    filter: drop-shadow(0 0 0 transparent);
+  }
+}
+
+/* ---------- cinematic tap dot ---------- */
+
+.tap-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  background: var(--gold);
+  box-shadow: 0 0 18px rgba(255, 217, 137, 0.85);
+  animation: tap-dot-pulse 1.8s ease-in-out infinite;
+}
+@keyframes tap-dot-pulse {
+  0%,
+  100% {
+    transform: scale(0.8);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 1;
+  }
+}
+
+/* ---------- ember / portal ---------- */
+
+.ember {
+  position: absolute;
+  bottom: -10px;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: var(--orange);
+  box-shadow: 0 0 8px rgba(244, 108, 57, 0.9);
+  animation: ember-rise linear infinite;
+}
+@keyframes ember-rise {
+  0% {
+    transform: translateY(0) translateX(0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-105vh) translateX(var(--drift, 20px));
+    opacity: 0;
+  }
+}
+
+/* ---------- griot text fade ---------- */
+
+.griot-line {
+  opacity: 0;
+  transform: translateY(8px);
+  animation: griot-in 1.1s ease forwards;
+}
+@keyframes griot-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- generic fades ---------- */
+
+.fade-in {
+  animation: fade-in 0.7s ease forwards;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .var-symbol--pulse,
+  .tap-dot,
+  .ember,
+  .griot-line,
+  .fade-in {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  .griot-line {
+    opacity: 1;
+    transform: none;
+  }
+  .carved-btn:hover {
+    transform: none;
+  }
+}
