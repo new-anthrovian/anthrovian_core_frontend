@@ -34,6 +34,24 @@ import EndingScreen from "./components/EndingScreen";
 import AminaTeaser from "./components/AminaTeaser";
 import ActInterlude from "./components/ActInterlude";
 import PauseMenu from "./components/PauseMenu";
+import ResumePrompt from "./components/ResumePrompt";
+
+import type { GamePhase } from "@/lib/types";
+
+/**
+ * Phases where the next thing the player sees is a UI screen they
+ * naturally tap (choice / interlude / reflection / etc.) — that tap
+ * is itself a fresh user gesture, so we don't need the resume prompt.
+ * Every other phase will mount a video and try to play audio, which
+ * is blocked after a refresh; for those we show ResumePrompt first.
+ */
+const TAP_DRIVEN_PHASES: GamePhase[] = [
+  "personalization",
+  "choice",
+  "act_interlude",
+  "legacy",
+  "reflection",
+];
 
 /**
  * The whole game. Single-page state machine: griot intro ->
@@ -48,6 +66,10 @@ export default function PlayClient() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Bumped to remount the current video component for "Replay this scene".
   const [replayNonce, setReplayNonce] = useState(0);
+  // Shown when a save is restored into a video-bearing phase — the
+  // user's tap on it re-establishes browser activation so the next
+  // video.play() with audio isn't blocked.
+  const [resumePromptOpen, setResumePromptOpen] = useState(false);
   const choiceLock = useRef(false);
 
   // Dev/QA only: a snapshot stack so testers can step back through the
@@ -63,8 +85,16 @@ export default function PlayClient() {
     const saved = loadGame();
     if (saved) {
       dispatch({ type: "LOAD_SAVE", state: saved });
+      // Resuming after a refresh: page has no user activation, so
+      // audible autoplay would be blocked. Show ResumePrompt unless
+      // the player is on a phase where the next interaction is
+      // already a tap on a UI element.
+      if (!TAP_DRIVEN_PHASES.includes(saved.phase)) {
+        setResumePromptOpen(true);
+      }
     } else {
       dispatch({ type: "START_INTRO" });
+      // Fresh start: the /awaken Begin tap already captured the gesture.
     }
     setDevMode(
       process.env.NODE_ENV === "development" ||
@@ -209,6 +239,18 @@ export default function PlayClient() {
 
   if (!hydrated) {
     return <div className="anthro-game" />;
+  }
+
+  // Short-circuit: capture a fresh user gesture before letting any
+  // video component mount and try to play. Once the prompt is
+  // dismissed, the normal body renders with VideoStage and play()
+  // succeeds because the page now has activation.
+  if (resumePromptOpen) {
+    return (
+      <main className="anthro-game">
+        <ResumePrompt onContinue={() => setResumePromptOpen(false)} />
+      </main>
+    );
   }
 
   const scene = SCENES[state.sceneIndex];
