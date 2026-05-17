@@ -6,6 +6,33 @@ import { useEffect, useRef, useState } from "react";
 const STALL_TIMEOUT_MS = 14000;
 
 /**
+ * NetworkInformation API — only Chromium implements it broadly. Always
+ * optional, always read defensively. Safari/Firefox return undefined.
+ */
+type NetConn = {
+  saveData?: boolean;
+  effectiveType?: "slow-2g" | "2g" | "3g" | "4g" | string;
+  addEventListener?: (type: "change", listener: () => void) => void;
+  removeEventListener?: (type: "change", listener: () => void) => void;
+};
+
+/**
+ * True when the user is on a constrained connection — Save-Data mode
+ * is on, or the effective network is 2g/3g. On those we (a) use the
+ * lighter `preload="metadata"` for the main <video> and (b) skip the
+ * hidden next-scene preload entirely. Browsers without NetInfo API
+ * return false (treat as unconstrained — best guess).
+ */
+function isConstrainedConnection(): boolean {
+  if (typeof navigator === "undefined") return false;
+  const conn = (navigator as Navigator & { connection?: NetConn }).connection;
+  if (!conn) return false;
+  if (conn.saveData) return true;
+  const t = conn.effectiveType;
+  return t === "slow-2g" || t === "2g" || t === "3g";
+}
+
+/**
  * Full-bleed video player. Videos have baked-in audio (griot VO + kora +
  * SFX) so they are NEVER muted. Audible autoplay is unlocked by the
  * /awaken Begin tap; if a .play() still rejects, a tap-to-continue
@@ -14,6 +41,9 @@ const STALL_TIMEOUT_MS = 14000;
  * Robustness: if the video errors (404 / decode failure) or stalls for
  * too long, a "tap to continue" overlay calls onEnded so a broken asset
  * degrades to a skip instead of hard-stalling the whole game.
+ *
+ * Mobile friendliness: on Save-Data or slow connections we drop
+ * preload to "metadata" and skip preloading the next scene.
  */
 export default function VideoStage({
   src,
@@ -36,6 +66,19 @@ export default function VideoStage({
   const [buffering, setBuffering] = useState(true);
   // The asset errored, or stalled past STALL_TIMEOUT_MS — offer a skip.
   const [faulted, setFaulted] = useState(false);
+  // Save-Data / 2g / 3g — kept in state so it can react to connection changes.
+  const [constrained, setConstrained] = useState(false);
+
+  // Detect (and re-detect) Save-Data + effective connection type. Runs
+  // once on mount with a `change` listener for live updates. SSR-safe.
+  useEffect(() => {
+    setConstrained(isConstrainedConnection());
+    const conn = (navigator as Navigator & { connection?: NetConn }).connection;
+    if (!conn?.addEventListener) return;
+    const onChange = () => setConstrained(isConstrainedConnection());
+    conn.addEventListener("change", onChange);
+    return () => conn.removeEventListener?.("change", onChange);
+  }, []);
 
   useEffect(() => {
     const el = videoRef.current;
@@ -93,7 +136,7 @@ export default function VideoStage({
         src={src}
         poster={poster}
         playsInline
-        preload="auto"
+        preload={constrained ? "metadata" : "auto"}
         controls={false}
         onEnded={onEnded}
         onError={() => setFaulted(true)}
@@ -135,8 +178,9 @@ export default function VideoStage({
         </button>
       )}
 
-      {/* Warm the buffer for the next scene. */}
-      {nextSrc && (
+      {/* Warm the buffer for the next scene — skipped on Save-Data /
+          slow networks to spare metered mobile data. */}
+      {nextSrc && !constrained && (
         <video
           key={`preload-${nextSrc}`}
           src={nextSrc}
