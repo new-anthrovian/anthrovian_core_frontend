@@ -129,6 +129,16 @@ export default function VideoStage({
 
   return (
     <div className="absolute inset-0 bg-black">
+      {/* Cinematic letterbox backdrop — blurred/dim poster fills the
+          area outside the video frame on mismatched aspect ratios
+          (landscape video on a portrait phone, etc.). */}
+      {poster && (
+        <div
+          className="anthro-video-backdrop"
+          style={{ backgroundImage: `url("${poster}")` }}
+          aria-hidden
+        />
+      )}
       <video
         key={src}
         ref={videoRef}
