@@ -220,7 +220,7 @@ export default function AboutPage() {
           {/* Image */}
           <motion.div variants={fadeInUp} className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
-              src="/audience.png"
+              src="/audience.jpeg"
               alt="African mother and daughter sharing a smartphone"
               fill
               className="object-cover object-center"
@@ -267,7 +267,7 @@ export default function AboutPage() {
           {/* Image */}
           <motion.div variants={fadeInUp} className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
-              src="/vision.png"
+              src="/creators.jpg"
               alt="African creative writer at a laptop"
               fill
               className="object-cover object-center"
