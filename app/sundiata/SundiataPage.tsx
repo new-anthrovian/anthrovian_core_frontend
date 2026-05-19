@@ -6,8 +6,8 @@ import { motion, Variants } from 'framer-motion';
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
   }
@@ -28,7 +28,7 @@ export default function SundiataPage() {
     <div className="bg-[#120A07] min-h-screen overflow-hidden">
 
       {/* ── SECTION 1: HERO ───────────────────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
@@ -47,7 +47,7 @@ export default function SundiataPage() {
         </div>
 
         {/* Content */}
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
@@ -63,11 +63,11 @@ export default function SundiataPage() {
           </h1>
 
           {/* Vertical divider */}
-          <motion.div 
+          <motion.div
             initial={{ height: 0 }}
             animate={{ height: 64 }}
             transition={{ delay: 1, duration: 1 }}
-            className="w-px h-16 bg-[#F6DFB6]/30 my-10" 
+            className="w-px h-16 bg-[#F6DFB6]/30 my-10"
           />
 
           {/* Intro copy */}
@@ -102,7 +102,7 @@ export default function SundiataPage() {
         <div className="max-w-7xl mx-auto space-y-32">
 
           {/* Chapter 1 — The iron rod */}
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -111,7 +111,7 @@ export default function SundiataPage() {
           >
             <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
               <Image
-                src="/iron-rod.png"
+                src="/rod.jpg"
                 alt="Blacksmith forging an iron rod"
                 fill
                 className="object-cover object-center"
@@ -144,7 +144,7 @@ export default function SundiataPage() {
           </motion.div>
 
           {/* Chapter 2 — The exile */}
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -174,7 +174,7 @@ export default function SundiataPage() {
           </motion.div>
 
           {/* Chapter 3 — The sorcerer of Sosso */}
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -183,7 +183,7 @@ export default function SundiataPage() {
           >
             <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl">
               <Image
-                src="/the-sorcerer.png"
+                src="/sorcerer.jpg"
                 alt="The Battle of Kirina — armies marching through storms"
                 fill
                 className="object-cover object-center"
@@ -211,7 +211,7 @@ export default function SundiataPage() {
           </motion.div>
 
           {/* Chapter 4 — The empire he built */}
-          <motion.div 
+          <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
@@ -239,7 +239,7 @@ export default function SundiataPage() {
             </motion.div>
             <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
               <Image
-                src="/the-empire-built.png"
+                src="/kingdom.jpg"
                 alt="Sundiata on his throne surrounded by kings"
                 fill
                 className="object-cover object-center"
@@ -251,7 +251,7 @@ export default function SundiataPage() {
       </section>
 
       {/* ── SECTION 3: WHY HIS STORY STILL MATTERS ───────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}

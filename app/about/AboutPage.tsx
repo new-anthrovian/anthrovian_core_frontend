@@ -5,8 +5,8 @@ import { motion, Variants } from 'framer-motion';
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { 
-    opacity: 1, 
+  visible: {
+    opacity: 1,
     y: 0,
     transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
   }
@@ -27,7 +27,7 @@ export default function AboutPage() {
     <div className="bg-[#0D0806] min-h-screen overflow-hidden">
 
       {/* ── SECTION 1: HERO ───────────────────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
@@ -47,7 +47,7 @@ export default function AboutPage() {
         </div>
 
         {/* Content */}
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
@@ -68,7 +68,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 2: INTRO TEXT ─────────────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -93,7 +93,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 3: WHAT WE ARE ────────────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -123,7 +123,7 @@ export default function AboutPage() {
           {/* Image */}
           <motion.div variants={fadeInUp} className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
-              src="/experience.png"
+              src="/what-we-are.jpg"
               alt="Hands holding a phone displaying African mythology interactive world"
               fill
               className="object-cover object-center"
@@ -134,7 +134,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 4: HOW WE BUILD ───────────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -173,7 +173,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 5: WHO WE BUILD FOR ───────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -231,7 +231,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 6: HUMAN PLATFORM STATEMENT ──────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -256,7 +256,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 7: A CONTINENT OF CREATORS ───────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -312,7 +312,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 8: WHERE WE ARE GOING ────────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -357,7 +357,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 9: THE MANDEN STATEMENT ──────────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -376,7 +376,7 @@ export default function AboutPage() {
       </motion.section>
 
       {/* ── SECTION 10: THE BELIEF AT THE CENTER ─────────────────────── */}
-      <motion.section 
+      <motion.section
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
