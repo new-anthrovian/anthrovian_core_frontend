@@ -35,7 +35,7 @@ export const VIDEO_BASE = RAW_VIDEO_BASE.replace(/\/+$/, "");
  * and the edge cache to refetch. Bump this whenever videos are
  * re-encoded or replaced at the same key.
  */
-const ASSET_VERSION = "2";
+const ASSET_VERSION = "3";
 
 const v = (name: string) => `${VIDEO_BASE}/${name}?v=${ASSET_VERSION}`;
 const poster = (name: string) => `${VIDEO_BASE}/posters/${name}?v=${ASSET_VERSION}`;
@@ -164,6 +164,7 @@ export const SCENES: Scene[] = [
         text: "I press my palms deeper into the earth. I feel something answer — a vibration, ancient and low.",
         impact: { nyama: 1 },
         tags: ["SPIRIT_CHILD"],
+        branchVideo: v("branch-02-c.mp4"),
         branchNarration:
           "The earth beneath your hands — it pulsed.\n\nNot loudly. Not clearly. Just once — like a heartbeat below a heartbeat. Later you would understand this as Nyama — the spirit force woven into the living world, present in blacksmiths, in hunters, in sacred blood.\n\nIt was not the earth greeting you. It was the earth recognizing you.\n\nThat night you dreamed of a great buffalo — your mother’s face inside its eyes. When you woke, your hands were still warm.",
       },
