@@ -346,7 +346,7 @@ export default function AboutPage() {
           {/* Image */}
           <motion.div variants={fadeInUp} className="order-1 md:order-2 relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
-              src="/the-future.jpg"
+              src="/journey.jpg"
               alt="African mythological warrior in vivid digital art"
               fill
               className="object-cover object-center"
