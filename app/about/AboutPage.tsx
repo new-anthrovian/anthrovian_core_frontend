@@ -145,7 +145,7 @@ export default function AboutPage() {
           {/* Image */}
           <motion.div variants={fadeInUp} className="relative rounded-2xl overflow-hidden aspect-[4/3]">
             <Image
-              src="/process.png"
+              src="/create.jpg"
               alt="African griot hands with traditional instruments"
               fill
               className="object-cover object-center"

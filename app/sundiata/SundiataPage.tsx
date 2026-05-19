@@ -165,7 +165,7 @@ export default function SundiataPage() {
             </motion.div>
             <motion.div variants={fadeInUp} className="relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-2xl order-1 md:order-2">
               <Image
-                src="/the-exile.png"
+                src="/exile.jpg"
                 alt="A lone figure walking toward the sunset in exile"
                 fill
                 className="object-cover object-center"
