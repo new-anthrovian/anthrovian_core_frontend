@@ -38,8 +38,10 @@ export const ACTIVE_SCENE_COUNT = 4;
 /* ---------- Initial state ---------- */
 
 export const initialGameState: GameState = {
-  version: 1,
+  version: 2,
   phase: "griot_intro",
+  playerName: null,
+  playerEmail: null,
   playerTheme: null,
   sceneIndex: 0,
   scores: { badenya: 0, fadenya: 0, nyama: 0 },
@@ -59,6 +61,9 @@ export const initialGameState: GameState = {
 export type GameAction =
   | { type: "START_INTRO" }
   | { type: "INTRO_VIDEO_ENDED" }
+  | { type: "SET_PLAYER_NAME"; name: string }
+  | { type: "SET_PLAYER_EMAIL"; email: string }
+  | { type: "NAME_CAPTURE_DONE" }
   | { type: "SELECT_THEME"; theme: PlayerTheme }
   | { type: "SCENE_VIDEO_ENDED" }
   | { type: "MAKE_CHOICE"; choiceKey: ChoiceKey }
@@ -84,6 +89,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case "INTRO_VIDEO_ENDED":
+      return { ...state, phase: "name_capture" };
+
+    case "SET_PLAYER_NAME":
+      return { ...state, playerName: action.name.trim() || null };
+
+    case "SET_PLAYER_EMAIL":
+      return { ...state, playerEmail: action.email.trim().toLowerCase() || null };
+
+    case "NAME_CAPTURE_DONE":
       return { ...state, phase: "personalization" };
 
     case "SELECT_THEME": {

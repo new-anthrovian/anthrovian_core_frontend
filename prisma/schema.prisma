@@ -1,0 +1,43 @@
+// Anthrovian — player identity + cross-device progress persistence.
+// The game stays offline-first (localStorage is source of truth); these
+// rows are a best-effort server mirror keyed by an anonymous device token,
+// linked to a Player once name/email are captured.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Player {
+  id           String        @id @default(cuid())
+  email        String        @unique // stored lowercased
+  name         String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  playthroughs Playthrough[]
+}
+
+model Playthrough {
+  id          String   @id @default(cuid())
+  deviceToken String   @unique // anonymous UUID from the client's localStorage
+  player      Player?  @relation(fields: [playerId], references: [id])
+  playerId    String?
+  playerName  String? // denormalized — a name can exist before any Player row
+  playerEmail String? // lowercased; cross-device lookup key
+  state       Json // full GameState verbatim (schema-agnostic; survives SAVE_VERSION bumps)
+  decisions   Json     @default("[]") // DecisionRecord[]; replaced idempotently each sync
+  badenya     Int      @default(0) // snapshot columns for analytics without parsing state
+  fadenya     Int      @default(0)
+  nyama       Int      @default(0)
+  endingId    String?
+  phase       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([playerEmail])
+}

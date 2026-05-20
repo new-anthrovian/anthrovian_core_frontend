@@ -20,6 +20,7 @@ import {
   recordDecision,
   syncProgress,
   clearRecordedDecisions,
+  linkIdentity,
 } from "@/lib/progress-sync";
 import type { ChoiceKey, PlayerTheme, GameState } from "@/lib/types";
 
@@ -34,6 +35,7 @@ import EndingScreen from "./components/EndingScreen";
 import AminaTeaser from "./components/AminaTeaser";
 import ActInterlude from "./components/ActInterlude";
 import PauseMenu from "./components/PauseMenu";
+import InscriptionInput from "./components/InscriptionInput";
 
 /**
  * The whole game. Single-page state machine: griot intro ->
@@ -175,6 +177,9 @@ export default function PlayClient() {
       case "griot_intro":
         dispatch({ type: "INTRO_VIDEO_ENDED" });
         break;
+      case "name_capture":
+        dispatch({ type: "NAME_CAPTURE_DONE" });
+        break;
       case "personalization":
         dispatch({ type: "SELECT_THEME", theme: "NEUTRAL" });
         break;
@@ -226,6 +231,25 @@ export default function PlayClient() {
           nextSrc={SCENES[0]?.setupVideo}
           paused={menuOpen}
           onEnded={() => dispatch({ type: "INTRO_VIDEO_ENDED" })}
+        />
+      );
+      break;
+
+    case "name_capture":
+      body = (
+        <InscriptionInput
+          prompt={"Before the tale begins —\nby what name will the griots sing you?"}
+          placeholder="Your name"
+          type="text"
+          submitLabel="The griots will remember"
+          optional
+          poster={GRIOT_INTRO.poster}
+          onSubmit={(name) => {
+            dispatch({ type: "SET_PLAYER_NAME", name });
+            linkIdentity({ name });
+            dispatch({ type: "NAME_CAPTURE_DONE" });
+          }}
+          onSkip={() => dispatch({ type: "NAME_CAPTURE_DONE" })}
         />
       );
       break;
@@ -340,7 +364,17 @@ export default function PlayClient() {
     }
 
     case "act_interlude":
-      body = <ActInterlude onReplay={handleReplay} onHome={handleHome} />;
+      body = (
+        <ActInterlude
+          onReplay={handleReplay}
+          onHome={handleHome}
+          savedEmail={state.playerEmail}
+          onCaptureEmail={(email) => {
+            dispatch({ type: "SET_PLAYER_EMAIL", email });
+            linkIdentity({ email, name: state.playerName ?? undefined });
+          }}
+        />
+      );
       break;
 
     case "legacy":
@@ -370,7 +404,17 @@ export default function PlayClient() {
     }
 
     case "amina":
-      body = <AminaTeaser onHome={handleHome} onReplay={handleReplay} />;
+      body = (
+        <AminaTeaser
+          onHome={handleHome}
+          onReplay={handleReplay}
+          savedEmail={state.playerEmail}
+          onCaptureEmail={(email) => {
+            dispatch({ type: "SET_PLAYER_EMAIL", email });
+            linkIdentity({ email, name: state.playerName ?? undefined });
+          }}
+        />
+      );
       break;
 
     default:
