@@ -6,7 +6,10 @@ import { AnimatePresence, motion } from "framer-motion";
 export const PLAYBACK_RATES = [1, 1.5, 2, 2.5] as const;
 export type PlaybackRate = (typeof PLAYBACK_RATES)[number];
 
-/** Speed-up pill for the griot's voice (videos have baked-in audio). */
+/**
+ * Round Meet-style control for the griot's voice speed (videos have
+ * baked-in audio). Tap to expand the rate options upward.
+ */
 export default function SpeedControl({
   rate,
   onChange,
@@ -15,10 +18,9 @@ export default function SpeedControl({
   onChange: (rate: PlaybackRate) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const label = `${rate}×`;
 
   return (
-    <div className="relative flex flex-col items-end">
+    <div className="relative">
       <AnimatePresence>
         {open && (
           <motion.div
@@ -26,7 +28,7 @@ export default function SpeedControl({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.18 }}
-            className="mb-2 flex flex-col overflow-hidden rounded-md border border-[rgba(246,223,182,0.22)] bg-black/85 backdrop-blur-sm"
+            className="absolute bottom-full right-0 mb-2 flex flex-col overflow-hidden rounded-xl border border-[rgba(246,223,182,0.22)] bg-black/85 backdrop-blur-md"
           >
             {PLAYBACK_RATES.map((r) => (
               <button
@@ -36,7 +38,7 @@ export default function SpeedControl({
                   onChange(r);
                   setOpen(false);
                 }}
-                className={`anthro-serif px-4 py-2 text-[0.9rem] transition-colors ${
+                className={`anthro-serif px-5 py-2 text-[0.92rem] transition-colors ${
                   r === rate
                     ? "bg-[rgba(244,108,57,0.22)] text-[var(--gold)]"
                     : "text-[var(--cream-dim)] hover:bg-white/5 hover:text-[var(--cream)]"
@@ -52,10 +54,12 @@ export default function SpeedControl({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        aria-label={`Playback speed ${label}`}
-        className="anthro-serif flex h-9 min-w-[3rem] items-center justify-center rounded-full border border-[rgba(246,223,182,0.28)] bg-black/55 px-3 text-[0.92rem] text-[var(--cream)] backdrop-blur-sm transition-colors hover:border-[rgba(244,108,57,0.6)] hover:text-[var(--gold)]"
+        aria-label={`Playback speed ${rate}×`}
+        className={`game-ctrl anthro-serif text-[0.82rem] font-semibold ${
+          rate !== 1 || open ? "game-ctrl--active" : ""
+        }`}
       >
-        {label}
+        {rate}&times;
       </button>
     </div>
   );
