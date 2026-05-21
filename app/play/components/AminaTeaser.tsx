@@ -18,11 +18,13 @@ export default function AminaTeaser({
   onReplay,
   onCaptureEmail,
   savedEmail,
+  playbackRate = 1,
 }: {
   onHome: () => void;
   onReplay: () => void;
   onCaptureEmail?: (email: string) => void;
   savedEmail?: string | null;
+  playbackRate?: number;
 }) {
   const [stage, setStage] = useState<"video" | "narration" | "cta">("video");
   const [submitted, setSubmitted] = useState<boolean>(!!savedEmail);
@@ -52,6 +54,7 @@ export default function AminaTeaser({
         <VideoStage
           src={AMINA.video}
           poster={AMINA.poster}
+          playbackRate={playbackRate}
           onEnded={() => setStage("narration")}
         />
       )}
