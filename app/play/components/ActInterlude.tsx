@@ -1,19 +1,75 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { PORTAL_POSTER } from "@/lib/story-data";
+import InscriptionInput from "./InscriptionInput";
 
 /**
  * End-of-Act interlude. Act I ("The Child Who Could Not Walk") is the
  * full playable arc for now; Acts II-III follow once their videos land.
+ * This is also the live game's email-capture moment (Act II waitlist +
+ * cross-device key) — the post-ending Amina teaser isn't reached while
+ * ACTIVE_SCENE_COUNT is Act-I-only.
  */
 export default function ActInterlude({
   onReplay,
   onHome,
+  onCaptureEmail,
+  savedEmail,
 }: {
   onReplay: () => void;
   onHome: () => void;
+  onCaptureEmail?: (email: string) => void;
+  savedEmail?: string | null;
 }) {
+  const [submitted, setSubmitted] = useState<boolean>(!!savedEmail);
+
+  const exits = (
+    <div className="mt-4 flex gap-5">
+      <button
+        type="button"
+        onClick={onReplay}
+        className="text-[0.85rem] uppercase tracking-[0.2em] text-[var(--cream-dim)] underline-offset-4 hover:text-[var(--cream)] hover:underline"
+      >
+        Begin Again
+      </button>
+      <button
+        type="button"
+        onClick={onHome}
+        className="text-[0.85rem] uppercase tracking-[0.2em] text-[var(--cream-dim)] underline-offset-4 hover:text-[var(--cream)] hover:underline"
+      >
+        Return Home
+      </button>
+    </div>
+  );
+
+  // Once an email is captured (or was already), show the waitlist email form.
+  if (onCaptureEmail && !submitted) {
+    return (
+      <div className="absolute inset-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${PORTAL_POSTER})` }}
+        />
+        <div className="absolute inset-0 bg-black/80" />
+        <InscriptionInput
+          prompt={"End of Act I.\nAct II — Exile and Becoming — awaits.\nWhere shall the griot send word when it begins?"}
+          placeholder="you@example.com"
+          type="email"
+          submitLabel="Summon me for Act II"
+          poster={PORTAL_POSTER}
+          onSubmit={(email) => {
+            onCaptureEmail(email);
+            setSubmitted(true);
+          }}
+          onSkip={() => setSubmitted(true)}
+          optional
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="absolute inset-0">
       <div
@@ -41,25 +97,12 @@ export default function ActInterlude({
         </p>
         <div className="mx-auto my-1 h-px w-16 bg-[rgba(246,223,182,0.3)]" />
         <p className="text-[0.82rem] uppercase tracking-[0.26em] text-[var(--cream-dim)]">
-          Act II — Exile and Becoming — awaits
+          {savedEmail || submitted
+            ? "The griot will summon you for Act II"
+            : "Act II — Exile and Becoming — awaits"}
         </p>
 
-        <div className="mt-4 flex gap-5">
-          <button
-            type="button"
-            onClick={onReplay}
-            className="text-[0.85rem] uppercase tracking-[0.2em] text-[var(--cream-dim)] underline-offset-4 hover:text-[var(--cream)] hover:underline"
-          >
-            Begin Again
-          </button>
-          <button
-            type="button"
-            onClick={onHome}
-            className="text-[0.85rem] uppercase tracking-[0.2em] text-[var(--cream-dim)] underline-offset-4 hover:text-[var(--cream)] hover:underline"
-          >
-            Return Home
-          </button>
-        </div>
+        {exits}
       </motion.div>
     </div>
   );

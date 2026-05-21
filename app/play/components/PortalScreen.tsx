@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
+import InscriptionInput from "./InscriptionInput";
 
 /** Deterministic ember field — avoids hydration mismatch from Math.random. */
 const EMBERS = Array.from({ length: 18 }, (_, i) => ({
@@ -19,11 +21,37 @@ export default function PortalScreen({
   hasSave,
   onBegin,
   onContinue,
+  onRestore,
+  restoreBusy = false,
+  restoreError = null,
 }: {
   hasSave: boolean;
   onBegin: () => void;
   onContinue: () => void;
+  onRestore: (email: string) => void;
+  restoreBusy?: boolean;
+  restoreError?: string | null;
 }) {
+  const [showRestore, setShowRestore] = useState(false);
+
+  if (showRestore) {
+    return (
+      <div className="anthro-game">
+        <InscriptionInput
+          prompt={"Returning to the tale?\nEnter the email you left with the griot."}
+          placeholder="you@example.com"
+          type="email"
+          submitLabel="Recall my tale"
+          busy={restoreBusy}
+          error={restoreError}
+          onSubmit={onRestore}
+          onSkip={() => setShowRestore(false)}
+          optional
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="anthro-game flex flex-col items-center justify-center px-6 text-center">
       {/* embers */}
@@ -81,6 +109,13 @@ export default function PortalScreen({
               Continue your journey
             </button>
           )}
+          <button
+            type="button"
+            onClick={() => setShowRestore(true)}
+            className="text-[0.78rem] uppercase tracking-[0.2em] text-[var(--cream-dim)]/70 underline-offset-4 hover:text-[var(--cream)] hover:underline"
+          >
+            Returning on a new device?
+          </button>
         </div>
       </motion.div>
     </div>
