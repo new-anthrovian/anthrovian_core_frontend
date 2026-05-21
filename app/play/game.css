@@ -212,6 +212,38 @@
     0 0 20px rgba(244, 108, 57, 0.3);
 }
 
+/* ---------- Google-Meet-style control buttons ---------- */
+
+.game-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.75rem;
+  width: 2.75rem;
+  border-radius: 9999px;
+  color: var(--cream);
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(246, 223, 182, 0.18);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.15s ease;
+}
+.game-ctrl:hover {
+  background: rgba(0, 0, 0, 0.74);
+  border-color: rgba(244, 108, 57, 0.5);
+  color: var(--gold);
+  transform: translateY(-1px);
+}
+.game-ctrl--active {
+  border-color: rgba(244, 108, 57, 0.6);
+  color: var(--gold);
+}
+
 /* ---------- variable visualizer ---------- */
 
 .var-symbol {
