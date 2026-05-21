@@ -489,24 +489,26 @@ export default function PlayClient() {
         </div>
       )}
 
-      {showSpeed && !menuOpen && (
-        <div className="absolute bottom-4 right-4 z-30">
-          <SpeedControl rate={playbackRate} onChange={handleSetRate} />
+      {/* Google-Meet-style control cluster, bottom-right. */}
+      {(showSpeed || showMenuButton) && !menuOpen && (
+        <div className="absolute bottom-4 right-4 z-30 flex items-center gap-2.5">
+          {showSpeed && (
+            <SpeedControl rate={playbackRate} onChange={handleSetRate} />
+          )}
+          {showMenuButton && (
+            <button
+              type="button"
+              aria-label="Pause"
+              onClick={() => setMenuOpen(true)}
+              className="game-ctrl"
+            >
+              <svg width="15" height="15" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
+                <rect x="2" y="1" width="3.5" height="12" rx="1" />
+                <rect x="8.5" y="1" width="3.5" height="12" rx="1" />
+              </svg>
+            </button>
+          )}
         </div>
-      )}
-
-      {showMenuButton && !menuOpen && (
-        <button
-          type="button"
-          aria-label="Pause"
-          onClick={() => setMenuOpen(true)}
-          className="absolute left-4 top-4 z-30 flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(246,223,182,0.25)] bg-black/40 text-[var(--cream)] backdrop-blur-sm transition-colors hover:bg-black/65"
-        >
-          <svg width="13" height="13" viewBox="0 0 14 14" fill="currentColor" aria-hidden>
-            <rect x="2" y="1" width="3.5" height="12" rx="1" />
-            <rect x="8.5" y="1" width="3.5" height="12" rx="1" />
-          </svg>
-        </button>
       )}
 
       <PauseMenu
