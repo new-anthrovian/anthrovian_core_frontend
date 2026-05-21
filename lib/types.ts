@@ -135,6 +135,7 @@ export interface AminaTeaser {
 
 export type GamePhase =
   | "griot_intro"
+  | "name_capture"
   | "personalization"
   | "scene"
   | "choice"
@@ -158,9 +159,13 @@ export interface PendingBranch {
 }
 
 export interface GameState {
-  /** Save-format version. Mismatched saves are ignored on load. */
-  version: 1;
+  /** Save-format version. Mismatched saves are migrated/ignored on load. */
+  version: 2;
   phase: GamePhase;
+  /** Captured by the griot during the intro (optional). */
+  playerName: string | null;
+  /** Captured at the Amina teaser (optional) — also the Act-2 waitlist + cross-device key. */
+  playerEmail: string | null;
   playerTheme: PlayerTheme | null;
   /** Index into SCENE_ORDER. */
   sceneIndex: number;

@@ -1,20 +1,21 @@
 /* =============================================================
-   Progress / decision sync abstraction.
+   Progress / identity sync — best-effort server mirror.
 
-   FRONTEND-ONLY FOR NOW. These functions are intentionally
-   fire-and-forget no-ops (they only mirror to localStorage). When
-   the NestJS + Postgres + Prisma backend lands, swap the bodies for
-   API calls and add an auth gate at /awaken — no game code changes.
-
-   The game NEVER awaits these. A failed/absent backend must never
-   block play (offline-first / 3G-resilient design goal).
+   OFFLINE-FIRST: every call here is fire-and-forget. The game NEVER
+   awaits these and they NEVER throw into game code. localStorage
+   (persistence.ts) remains the source of truth; a failed/absent/slow
+   server has zero effect on gameplay. Each sync sends the FULL state,
+   so the server self-heals to latest on the next success — no retry
+   queue needed.
    ============================================================= */
 
 import type { DecisionRecord, GameState } from "./types";
+import { getDeviceToken } from "./device-token";
 
 const DECISIONS_KEY = "anthrovian-sundiata-decisions";
 
-/** Append-only local log of every decision — backend-ready shape. */
+/* ---------- local decision log (unchanged) ---------- */
+
 function appendLocalDecision(decision: DecisionRecord): void {
   try {
     if (typeof window === "undefined") return;
@@ -27,29 +28,11 @@ function appendLocalDecision(decision: DecisionRecord): void {
   }
 }
 
-/**
- * Record a single decision. Fire-and-forget — call without awaiting.
- * Later: POST /playthrough/decisions.
- */
 export function recordDecision(decision: DecisionRecord): void {
+  // Logged locally; flushed to the server with the next syncProgress().
   appendLocalDecision(decision);
-  // Backend hook (later):
-  //   void fetch("/api/playthrough/decisions", { method: "POST", body: ... })
-  //     .catch(() => { /* never block the game */ });
 }
 
-/**
- * Mirror the full game state. Fire-and-forget — call without awaiting.
- * Later: PATCH /playthrough.
- */
-export function syncProgress(_state: GameState): void {
-  // No-op today; persistence.ts already owns the localStorage save.
-  // Backend hook (later):
-  //   void fetch("/api/playthrough", { method: "PATCH", body: ... })
-  //     .catch(() => { /* never block the game */ });
-}
-
-/** Read the local decision log (useful for later acts / debugging). */
 export function getRecordedDecisions(): DecisionRecord[] {
   try {
     if (typeof window === "undefined") return [];
@@ -60,7 +43,6 @@ export function getRecordedDecisions(): DecisionRecord[] {
   }
 }
 
-/** Clear the local decision log (on RESTART). */
 export function clearRecordedDecisions(): void {
   try {
     if (typeof window === "undefined") return;
@@ -68,4 +50,42 @@ export function clearRecordedDecisions(): void {
   } catch {
     // Silently fail
   }
+}
+
+/* ---------- server sync (fire-and-forget) ---------- */
+
+function post(url: string, body: unknown): void {
+  if (typeof window === "undefined") return;
+  try {
+    void fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      keepalive: true, // survive page unload / navigation
+    }).catch(() => {
+      /* never block or surface to the game */
+    });
+  } catch {
+    // ignore (e.g. fetch unavailable)
+  }
+}
+
+/** Mirror the full game state to the server. Fire-and-forget. */
+export function syncProgress(state: GameState): void {
+  const deviceToken = getDeviceToken();
+  if (!deviceToken) return; // storage unavailable — stay local-only
+  post("/api/playthrough", {
+    deviceToken,
+    state,
+    decisions: getRecordedDecisions(),
+    name: state.playerName,
+    email: state.playerEmail,
+  });
+}
+
+/** Link a captured name and/or email to this device. Fire-and-forget. */
+export function linkIdentity(identity: { name?: string; email?: string }): void {
+  const deviceToken = getDeviceToken();
+  if (!deviceToken) return;
+  post("/api/identity", { deviceToken, ...identity });
 }
