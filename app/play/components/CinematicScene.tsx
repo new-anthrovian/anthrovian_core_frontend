@@ -16,12 +16,14 @@ export default function CinematicScene({
   nextSrc,
   onAdvance,
   paused = false,
+  playbackRate = 1,
 }: {
   src: string;
   poster?: string;
   nextSrc?: string;
   onAdvance: () => void;
   paused?: boolean;
+  playbackRate?: number;
 }) {
   const [ended, setEnded] = useState(false);
 
@@ -32,6 +34,7 @@ export default function CinematicScene({
         poster={poster}
         nextSrc={nextSrc}
         paused={paused}
+        playbackRate={playbackRate}
         onEnded={() => setEnded(true)}
       />
 

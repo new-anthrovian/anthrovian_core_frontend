@@ -36,6 +36,10 @@ import AminaTeaser from "./components/AminaTeaser";
 import ActInterlude from "./components/ActInterlude";
 import PauseMenu from "./components/PauseMenu";
 import InscriptionInput from "./components/InscriptionInput";
+import SpeedControl, { type PlaybackRate } from "./components/SpeedControl";
+import OrientationHint from "./components/OrientationHint";
+
+const RATE_KEY = "anthrovian-playback-rate";
 
 /**
  * The whole game. Single-page state machine: griot intro ->
@@ -50,7 +54,18 @@ export default function PlayClient() {
   const [menuOpen, setMenuOpen] = useState(false);
   // Bumped to remount the current video component for "Replay this scene".
   const [replayNonce, setReplayNonce] = useState(0);
+  // Griot voice playback speed (videos have baked-in audio).
+  const [playbackRate, setPlaybackRate] = useState<number>(1);
   const choiceLock = useRef(false);
+
+  const handleSetRate = useCallback((r: PlaybackRate) => {
+    setPlaybackRate(r);
+    try {
+      window.localStorage.setItem(RATE_KEY, String(r));
+    } catch {
+      /* ignore */
+    }
+  }, []);
 
   // Dev/QA only: a snapshot stack so testers can step back through the
   // state machine. Gated by NODE_ENV or a localStorage flag — never
@@ -73,6 +88,12 @@ export default function PlayClient() {
         (typeof window !== "undefined" &&
           window.localStorage.getItem("anthro-dev") === "1")
     );
+    try {
+      const stored = Number(window.localStorage.getItem(RATE_KEY));
+      if (stored && stored >= 1 && stored <= 2.5) setPlaybackRate(stored);
+    } catch {
+      /* ignore */
+    }
     setHydrated(true);
   }, []);
 
@@ -230,6 +251,7 @@ export default function PlayClient() {
           poster={GRIOT_INTRO.poster}
           nextSrc={SCENES[0]?.setupVideo}
           paused={menuOpen}
+          playbackRate={playbackRate}
           onEnded={() => dispatch({ type: "INTRO_VIDEO_ENDED" })}
         />
       );
@@ -289,6 +311,7 @@ export default function PlayClient() {
             poster={scene.poster}
             nextSrc={nextSceneVideo}
             paused={menuOpen}
+            playbackRate={playbackRate}
             onEnded={() => dispatch({ type: "SCENE_VIDEO_ENDED" })}
           />
         );
@@ -314,6 +337,7 @@ export default function PlayClient() {
           poster={scene.poster}
           nextSrc={nextSceneVideo}
           paused={menuOpen}
+          playbackRate={playbackRate}
           onAdvance={() => dispatch({ type: "CINEMATIC_TAP" })}
         />
       ) : null;
@@ -347,6 +371,7 @@ export default function PlayClient() {
             poster={branchScene?.poster}
             nextSrc={nextSceneVideo}
             paused={menuOpen}
+            playbackRate={playbackRate}
             onEnded={() => dispatch({ type: "BRANCH_ENDED" })}
           />
         );
@@ -408,6 +433,7 @@ export default function PlayClient() {
         <AminaTeaser
           onHome={handleHome}
           onReplay={handleReplay}
+          playbackRate={playbackRate}
           savedEmail={state.playerEmail}
           onCaptureEmail={(email) => {
             dispatch({ type: "SET_PLAYER_EMAIL", email });
@@ -426,6 +452,20 @@ export default function PlayClient() {
     state.phase === "scene" ||
     state.phase === "choice" ||
     state.phase === "branch";
+
+  // Speed control shows whenever a baked-audio video is on screen.
+  const branchOpt =
+    state.phase === "branch" && state.pendingBranch
+      ? getScene(state.pendingBranch.sceneId)?.choices?.find(
+          (c) => c.key === state.pendingBranch!.choiceKey
+        )
+      : undefined;
+  const showSpeed =
+    state.phase === "griot_intro" ||
+    state.phase === "amina" ||
+    state.phase === "cinematic" ||
+    (state.phase === "scene" && !!scene?.setupVideo) ||
+    (state.phase === "branch" && !!branchOpt?.branchVideo);
 
   // The pause glyph is hidden on screens that already carry their own
   // navigation (the interlude / ending / Amina screens).
@@ -446,6 +486,12 @@ export default function PlayClient() {
             lastIncreasedVar={state.lastIncreasedVar}
             pulseKey={state.history.length}
           />
+        </div>
+      )}
+
+      {showSpeed && !menuOpen && (
+        <div className="absolute bottom-4 right-4 z-30">
+          <SpeedControl rate={playbackRate} onChange={handleSetRate} />
         </div>
       )}
 
@@ -497,6 +543,9 @@ export default function PlayClient() {
           </span>
         </div>
       )}
+
+      {/* Mobile-only nudge to rotate; self-gates + auto-hides on landscape. */}
+      <OrientationHint />
     </main>
   );
 }

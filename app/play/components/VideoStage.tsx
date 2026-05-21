@@ -52,6 +52,7 @@ export default function VideoStage({
   nextSrc,
   showBuffering = true,
   paused = false,
+  playbackRate = 1,
 }: {
   src: string;
   poster?: string;
@@ -60,6 +61,8 @@ export default function VideoStage({
   showBuffering?: boolean;
   /** When true (e.g. the pause menu is open) the video holds. */
   paused?: boolean;
+  /** Speeds up the griot's baked-in voice. Pitch is preserved. */
+  playbackRate?: number;
 }) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [needsTap, setNeedsTap] = useState(false);
@@ -108,6 +111,18 @@ export default function VideoStage({
     }
   }, [paused, needsTap, faulted]);
 
+  // Apply playback speed (a src change resets it, so depend on src too).
+  // preservesPitch keeps the griot's voice intelligible when sped up.
+  useEffect(() => {
+    const el = videoRef.current as
+      | (HTMLVideoElement & { preservesPitch?: boolean; webkitPreservesPitch?: boolean })
+      | null;
+    if (!el) return;
+    el.preservesPitch = true;
+    el.webkitPreservesPitch = true;
+    el.playbackRate = playbackRate;
+  }, [playbackRate, src]);
+
   // Stall watchdog: if we're buffering too long (and not just waiting on a
   // tap or the pause menu), surface a manual skip so the game can't hang.
   useEffect(() => {
@@ -152,7 +167,14 @@ export default function VideoStage({
         onError={() => setFaulted(true)}
         onWaiting={() => setBuffering(true)}
         onPlaying={() => setBuffering(false)}
-        onCanPlay={() => setBuffering(false)}
+        onLoadedMetadata={(e) => {
+          // A fresh src can reset playbackRate — re-assert it.
+          e.currentTarget.playbackRate = playbackRate;
+        }}
+        onCanPlay={(e) => {
+          setBuffering(false);
+          e.currentTarget.playbackRate = playbackRate;
+        }}
       />
 
       {showBuffering && buffering && !needsTap && !faulted && (
