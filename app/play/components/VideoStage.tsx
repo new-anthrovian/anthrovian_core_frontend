@@ -71,6 +71,9 @@ export default function VideoStage({
   const [faulted, setFaulted] = useState(false);
   // Save-Data / 2g / 3g — kept in state so it can react to connection changes.
   const [constrained, setConstrained] = useState(false);
+  // Latched true once `playing` actually fires — used to detect the iOS
+  // Safari case where play() resolves but playback never starts.
+  const playStartedRef = useRef(false);
 
   // Detect (and re-detect) Save-Data + effective connection type. Runs
   // once on mount with a `change` listener for live updates. SSR-safe.
@@ -89,15 +92,31 @@ export default function VideoStage({
     setNeedsTap(false);
     setBuffering(true);
     setFaulted(false);
+    playStartedRef.current = false;
+
+    let detectId: ReturnType<typeof setTimeout> | undefined;
     const tryPlay = async () => {
       try {
         await el.play();
       } catch {
-        // Autoplay-with-sound blocked — fall back to an explicit tap.
+        // Autoplay-with-sound rejected — fall back to an explicit tap.
         setNeedsTap(true);
+        return;
       }
+      // iOS Safari (and sometimes Android Chrome) resolve play() WITHOUT
+      // actually starting playback when autoplay-with-sound is blocked
+      // — no rejection, no `playing` event. Verify within ~1.2s and
+      // surface the tap overlay if nothing started.
+      detectId = setTimeout(() => {
+        if (!playStartedRef.current && !el.ended && el.paused) {
+          setNeedsTap(true);
+        }
+      }, 1200);
     };
     void tryPlay();
+    return () => {
+      if (detectId !== undefined) clearTimeout(detectId);
+    };
   }, [src]);
 
   // Pause / resume when the pause menu opens or closes.
@@ -166,7 +185,10 @@ export default function VideoStage({
         onEnded={onEnded}
         onError={() => setFaulted(true)}
         onWaiting={() => setBuffering(true)}
-        onPlaying={() => setBuffering(false)}
+        onPlaying={() => {
+          setBuffering(false);
+          playStartedRef.current = true;
+        }}
         onLoadedMetadata={(e) => {
           // A fresh src can reset playbackRate — re-assert it.
           e.currentTarget.playbackRate = playbackRate;
@@ -183,14 +205,20 @@ export default function VideoStage({
         </div>
       )}
 
-      {/* Autoplay blocked — tapping retries playback. */}
+      {/* Autoplay blocked — tapping retries playback. Includes a play
+          icon so the affordance is obvious on mobile where it's easy
+          to mistake the static poster for a freeze. */}
       {needsTap && !faulted && (
         <button
           type="button"
           onClick={handleTap}
-          className="anthro-serif absolute inset-0 flex items-center justify-center bg-black/70 text-[1.1rem] tracking-wide text-[var(--cream)]"
+          className="anthro-serif absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/72 text-[var(--cream)]"
         >
-          Tap to continue
+          <svg width="68" height="68" viewBox="0 0 68 68" fill="none" aria-hidden>
+            <circle cx="34" cy="34" r="32" stroke="currentColor" strokeWidth="1.5" opacity="0.55" />
+            <polygon points="28,22 28,46 48,34" fill="currentColor" />
+          </svg>
+          <span className="text-[1.1rem] tracking-wide">Tap to continue</span>
         </button>
       )}
 
