@@ -201,6 +201,9 @@ export default function PlayClient() {
       case "name_capture":
         dispatch({ type: "NAME_CAPTURE_DONE" });
         break;
+      case "email_capture":
+        dispatch({ type: "EMAIL_CAPTURE_DONE" });
+        break;
       case "personalization":
         dispatch({ type: "SELECT_THEME", theme: "NEUTRAL" });
         break;
@@ -263,7 +266,7 @@ export default function PlayClient() {
           prompt={"Before the tale begins —\nby what name will the griots sing you?"}
           placeholder="Your name"
           type="text"
-          submitLabel="The griots will remember"
+          submitLabel="Continue"
           optional
           poster={GRIOT_INTRO.poster}
           onSubmit={(name) => {
@@ -272,6 +275,33 @@ export default function PlayClient() {
             dispatch({ type: "NAME_CAPTURE_DONE" });
           }}
           onSkip={() => dispatch({ type: "NAME_CAPTURE_DONE" })}
+        />
+      );
+      break;
+
+    case "email_capture":
+      // Asked right after the name so cross-device resume works from the
+      // very start of Act I (server keys on lowercased email). Optional
+      // — players who skip can still play; they'll just have no way to
+      // pick up on another device until they enter an email later at the
+      // Act Interlude / Amina teaser.
+      body = (
+        <InscriptionInput
+          prompt={"And by what scroll can the griot find you again,\nshould the tale carry across many moons?"}
+          placeholder="your@email"
+          type="email"
+          submitLabel="Continue"
+          optional
+          poster={GRIOT_INTRO.poster}
+          onSubmit={(email) => {
+            dispatch({ type: "SET_PLAYER_EMAIL", email });
+            linkIdentity({
+              email,
+              name: state.playerName ?? undefined,
+            });
+            dispatch({ type: "EMAIL_CAPTURE_DONE" });
+          }}
+          onSkip={() => dispatch({ type: "EMAIL_CAPTURE_DONE" })}
         />
       );
       break;

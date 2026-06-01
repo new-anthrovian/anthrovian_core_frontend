@@ -136,6 +136,7 @@ export interface AminaTeaser {
 export type GamePhase =
   | "griot_intro"
   | "name_capture"
+  | "email_capture"
   | "personalization"
   | "scene"
   | "choice"
@@ -164,7 +165,9 @@ export interface GameState {
   phase: GamePhase;
   /** Captured by the griot during the intro (optional). */
   playerName: string | null;
-  /** Captured at the Amina teaser (optional) — also the Act-2 waitlist + cross-device key. */
+  /** Captured during onboarding (optional) — the cross-device resume key
+   *  AND the Act-2 waitlist. Asked right after name, also re-prompted at
+   *  the Amina teaser / Act Interlude in case the player skipped it. */
   playerEmail: string | null;
   playerTheme: PlayerTheme | null;
   /** Index into SCENE_ORDER. */
