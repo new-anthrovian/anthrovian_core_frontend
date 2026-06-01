@@ -45,3 +45,6 @@ next-env.d.ts
 # Local copies under public/videos/ are kept for offline dev; not committed.
 /public/videos/*.mp4
 /public/videos/posters/*.jpg
+
+# Local scratch dir for video re-encodes (scripts/upload-asset.mjs)
+tmp/
