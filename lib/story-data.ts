@@ -35,7 +35,7 @@ export const VIDEO_BASE = RAW_VIDEO_BASE.replace(/\/+$/, "");
  * and the edge cache to refetch. Bump this whenever videos are
  * re-encoded or replaced at the same key.
  */
-const ASSET_VERSION = "3";
+const ASSET_VERSION = "4";
 
 const v = (name: string) => `${VIDEO_BASE}/${name}?v=${ASSET_VERSION}`;
 const poster = (name: string) => `${VIDEO_BASE}/posters/${name}?v=${ASSET_VERSION}`;
