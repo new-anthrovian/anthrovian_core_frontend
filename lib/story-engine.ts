@@ -64,6 +64,7 @@ export type GameAction =
   | { type: "SET_PLAYER_NAME"; name: string }
   | { type: "SET_PLAYER_EMAIL"; email: string }
   | { type: "NAME_CAPTURE_DONE" }
+  | { type: "EMAIL_CAPTURE_DONE" }
   | { type: "SELECT_THEME"; theme: PlayerTheme }
   | { type: "SCENE_VIDEO_ENDED" }
   | { type: "MAKE_CHOICE"; choiceKey: ChoiceKey }
@@ -98,6 +99,9 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       return { ...state, playerEmail: action.email.trim().toLowerCase() || null };
 
     case "NAME_CAPTURE_DONE":
+      return { ...state, phase: "email_capture" };
+
+    case "EMAIL_CAPTURE_DONE":
       return { ...state, phase: "personalization" };
 
     case "SELECT_THEME": {
