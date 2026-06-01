@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /** Touch device held in portrait, on a phone-sized viewport. */
@@ -17,10 +17,22 @@ function isMobilePortrait(): boolean {
  * This nudge invites the player to rotate. It auto-hides the moment the
  * device turns landscape, and can be dismissed to play in portrait
  * anyway (the game handles portrait gracefully — it's just nicer wide).
+ *
+ * Orientation-lock reality: there's no browser API to *detect* whether
+ * the OS rotation lock is on. We do two things to help:
+ *   1. Best-effort: try `screen.orientation.lock('landscape')` once per
+ *      mount. Works on Android Chrome (in fullscreen). iOS Safari throws
+ *      — we swallow it. Free win for the subset that supports it.
+ *   2. Always show the cross-platform rotation-lock icon + a plain-
+ *      English line so users whose phones won't rotate know *why* and
+ *      where to fix it (iOS Control Center / Android Quick Settings).
  */
 export default function OrientationHint() {
   const [portrait, setPortrait] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  // Programmatic landscape lock is a one-shot per mount — repeating
+  // wastes calls and some browsers warn on it.
+  const triedLock = useRef(false);
 
   useEffect(() => {
     const update = () => setPortrait(isMobilePortrait());
@@ -32,6 +44,21 @@ export default function OrientationHint() {
       window.removeEventListener("orientationchange", update);
     };
   }, []);
+
+  // When we first detect mobile-portrait, try the Screen Orientation API
+  // (Android Chrome supports it; iOS Safari does not — silent failure).
+  useEffect(() => {
+    if (!portrait || triedLock.current) return;
+    triedLock.current = true;
+    // lock() is editor's-draft and missing from lib.dom's ScreenOrientation.
+    // @ts-expect-error — runtime-checked via optional chaining.
+    const p = screen.orientation?.lock?.("landscape");
+    if (p && typeof p.then === "function") {
+      p.catch(() => {
+        /* iOS Safari throws "NotSupportedError" — expected. */
+      });
+    }
+  }, [portrait]);
 
   const show = portrait && !dismissed;
 
@@ -69,6 +96,38 @@ export default function OrientationHint() {
             Sundiata&rsquo;s tale is told widescreen — landscape gives you the
             full frame.
           </p>
+
+          {/* Orientation-lock guidance. The padlock-with-circular-arrow
+              icon below is the same symbol iOS uses in Control Center
+              and Android in Quick Settings — recognizable across both
+              platforms. Always shown so users whose phones won't rotate
+              know immediately why, without waiting on a delayed hint. */}
+          <div className="mt-2 flex max-w-xs flex-col items-center gap-2 border-t border-[rgba(246,223,182,0.16)] pt-4">
+            <svg
+              width="34"
+              height="34"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--cream-dim)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              {/* circular rotation arrow wrapping the lock */}
+              <path d="M19 11a7 7 0 0 0-12.6-3.5" />
+              <polyline points="6.4 3.5 6.4 7.5 10.4 7.5" />
+              <path d="M5 13a7 7 0 0 0 12.6 3.5" />
+              <polyline points="17.6 20.5 17.6 16.5 13.6 16.5" />
+              {/* central padlock */}
+              <rect x="9.5" y="10" width="5" height="4" rx="0.6" />
+              <path d="M10.5 10v-1a1.5 1.5 0 0 1 3 0v1" />
+            </svg>
+            <p className="anthro-serif text-[0.82rem] italic leading-relaxed text-[var(--cream-dim)]">
+              If your screen won&rsquo;t turn, rotation lock is on — disable it
+              in Control Center (iOS) or Quick Settings (Android).
+            </p>
+          </div>
 
           <button
             type="button"
