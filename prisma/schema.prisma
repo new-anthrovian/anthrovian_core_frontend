@@ -14,12 +14,13 @@ datasource db {
 }
 
 model Player {
-  id           String        @id @default(cuid())
-  email        String        @unique // stored lowercased
-  name         String?
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  playthroughs Playthrough[]
+  id               String            @id @default(cuid())
+  email            String            @unique // stored lowercased
+  name             String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  playthroughs     Playthrough[]
+  whatsappSessions WhatsAppSession[]
 }
 
 model Playthrough {
@@ -38,6 +39,27 @@ model Playthrough {
   phase       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([playerEmail])
+}
+
+// WhatsApp channel session — one row per E.164 phone number.
+// Keyed by `phone` rather than a device token (the conversation is the
+// "device"). Reuses the same GameState JSON shape as Playthrough so the
+// pure `gameReducer` works against both channels without translation.
+// Additive: this model does not modify Player or Playthrough.
+model WhatsAppSession {
+  id            String    @id @default(cuid())
+  phone         String    @unique // E.164, e.g. "+2348012345678"
+  player        Player?   @relation(fields: [playerId], references: [id])
+  playerId      String?
+  playerName    String? // denormalized — name may exist before any Player row
+  playerEmail   String? // lowercased; cross-channel lookup key
+  state         Json // full GameState verbatim — same shape as Playthrough.state
+  lastMsgId     String? // provider message id; deduplicates webhook retries
+  lastInboundAt DateTime? // tracks the 24-hour Meta re-engagement window
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@index([playerEmail])
 }
