@@ -28,9 +28,17 @@ export default function EndingScreen({
   onReplay: () => void;
   onHome: () => void;
 }) {
-  const [stage, setStage] = useState<"video" | "card">("video");
+  // When the ending video hasn't been delivered yet we open straight
+  // on the card stage. Same fallback pattern as scenes with no
+  // setupVideo (e.g. Iron Rod before its video landed): a text-only
+  // version of the beat plays so the player can complete the journey
+  // and see their reflection, and the video slots in transparently
+  // when it arrives.
+  const [stage, setStage] = useState<"video" | "card">(
+    ending.endingVideo ? "video" : "card"
+  );
 
-  if (stage === "video") {
+  if (stage === "video" && ending.endingVideo) {
     return (
       <VideoStage
         src={ending.endingVideo}
