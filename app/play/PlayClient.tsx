@@ -317,7 +317,7 @@ export default function PlayClient() {
       body = (
         <InscriptionInput
           key="email-capture"
-          prompt={"And by what scroll can the griot find you again,\nshould the tale carry across many moons?"}
+          prompt={"And by what email may the griot find you again,\nshould the tale carry across many moons?"}
           placeholder="your@email"
           type="email"
           submitLabel="Continue"
