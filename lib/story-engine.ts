@@ -28,12 +28,13 @@ import {
 export const LEGACY_TIME_LIMIT_MS = 18 * 60 * 1000;
 
 /**
- * How many scenes are currently playable. ACT I ONLY for now — Scenes 1-4
- * (hunters_prophecy, mockery, iron_rod, baobab). Acts II-III data still
- * lives in story-data.ts; raise this to SCENES.length when their videos
- * are delivered. Past this boundary the game shows the Act interlude.
+ * How many scenes are currently playable. ACTS I + II — Scenes 1–7
+ * (hunters_prophecy, mockery, iron_rod, baobab, exile, mema, return).
+ * Act III still lives in story-data.ts; raise this to SCENES.length when
+ * its videos are delivered. Past this boundary the game shows the Act
+ * interlude — currently the "End of Act II" beat ahead of Act III.
  */
-export const ACTIVE_SCENE_COUNT = 4;
+export const ACTIVE_SCENE_COUNT = 7;
 
 /* ---------- Initial state ---------- */
 

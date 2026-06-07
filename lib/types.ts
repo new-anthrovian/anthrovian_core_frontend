@@ -51,6 +51,14 @@ export interface ChoiceOption {
   branchNarration: string;
   /** Optional dedicated branch video; when absent, branchNarration renders over the poster. */
   branchVideo?: string;
+  /**
+   * Multi-part branch — a sequence of video URLs played back-to-back as
+   * one continuous beat. Used when the filmmaker delivered a single
+   * Path response as two or more clips (e.g. Act II Scene 5 Path B,
+   * split across two source files). Mutually exclusive with `branchVideo`
+   * — if both are set, `branchVideos` wins.
+   */
+  branchVideos?: string[];
 }
 
 export interface Scene {

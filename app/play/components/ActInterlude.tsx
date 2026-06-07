@@ -6,23 +6,55 @@ import { PORTAL_POSTER } from "@/lib/story-data";
 import InscriptionInput from "./InscriptionInput";
 
 /**
- * End-of-Act interlude. Act I ("The Child Who Could Not Walk") is the
- * full playable arc for now; Acts II-III follow once their videos land.
- * This is also the live game's email-capture moment (Act II waitlist +
- * cross-device key) — the post-ending Amina teaser isn't reached while
- * ACTIVE_SCENE_COUNT is Act-I-only.
+ * Per-act copy. Each entry covers the interlude shown AFTER `act` is
+ * finished — `nextAct` is the one the player is waiting on. The email-
+ * capture moment is shared across acts (waitlist + cross-device key).
+ */
+const ACT_COPY = {
+  1: {
+    label: "End of Act I",
+    title: "The Child Who Could Not Walk",
+    summary:
+      "You uprooted the baobab and laid it at your mother’s door. You are no longer a story someone else told about you. You are your own legend now — walking.",
+    awaitLine: "Act II — Exile and Becoming — awaits",
+    summoned: "The griot will summon you for Act II",
+    capturePrompt:
+      "End of Act I.\nAct II — Exile and Becoming — awaits.\nWhere shall the griot send word when it begins?",
+    submitLabel: "Summon me for Act II",
+  },
+  2: {
+    label: "End of Act II",
+    title: "Exile and Becoming",
+    summary:
+      "The grief was a river. But Sundiata — rivers are also roads. Sogolon is at peace, the twelve kings are listening, and the road bends home.",
+    awaitLine: "Act III — The Lion Rises — awaits",
+    summoned: "The griot will summon you for Act III",
+    capturePrompt:
+      "End of Act II.\nAct III — The Lion Rises — awaits.\nWhere shall the griot send word when it begins?",
+    submitLabel: "Summon me for Act III",
+  },
+} as const;
+
+/**
+ * End-of-Act interlude. Shown after the last currently-playable scene
+ * of an act (controlled by ACTIVE_SCENE_COUNT). Covers email capture
+ * (Act-N+1 waitlist + cross-device resume key) and the act recap.
  */
 export default function ActInterlude({
+  act = 1,
   onReplay,
   onHome,
   onCaptureEmail,
   savedEmail,
 }: {
+  /** Which act just ended. Defaults to 1 for backward compatibility. */
+  act?: 1 | 2;
   onReplay: () => void;
   onHome: () => void;
   onCaptureEmail?: (email: string) => void;
   savedEmail?: string | null;
 }) {
+  const copy = ACT_COPY[act];
   const [submitted, setSubmitted] = useState<boolean>(!!savedEmail);
 
   const exits = (
@@ -54,10 +86,10 @@ export default function ActInterlude({
         />
         <div className="absolute inset-0 bg-black/80" />
         <InscriptionInput
-          prompt={"End of Act I.\nAct II — Exile and Becoming — awaits.\nWhere shall the griot send word when it begins?"}
+          prompt={copy.capturePrompt}
           placeholder="you@example.com"
           type="email"
-          submitLabel="Summon me for Act II"
+          submitLabel={copy.submitLabel}
           poster={PORTAL_POSTER}
           onSubmit={(email) => {
             onCaptureEmail(email);
@@ -85,21 +117,17 @@ export default function ActInterlude({
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
       >
         <p className="anthro-serif text-[0.8rem] uppercase tracking-[0.34em] text-[var(--gold)]">
-          End of Act I
+          {copy.label}
         </p>
         <h1 className="anthro-serif text-[2rem] leading-tight text-[var(--cream)] md:text-[2.6rem]">
-          The Child Who Could Not Walk
+          {copy.title}
         </h1>
         <p className="anthro-serif max-w-md text-[1.05rem] italic leading-relaxed text-[var(--cream-dim)]">
-          You uprooted the baobab and laid it at your mother&rsquo;s door. You
-          are no longer a story someone else told about you. You are your own
-          legend now — walking.
+          {copy.summary}
         </p>
         <div className="mx-auto my-1 h-px w-16 bg-[rgba(246,223,182,0.3)]" />
         <p className="text-[0.82rem] uppercase tracking-[0.26em] text-[var(--cream-dim)]">
-          {savedEmail || submitted
-            ? "The griot will summon you for Act II"
-            : "Act II — Exile and Becoming — awaits"}
+          {savedEmail || submitted ? copy.summoned : copy.awaitLine}
         </p>
 
         {exits}
