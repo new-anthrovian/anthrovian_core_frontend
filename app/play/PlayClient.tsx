@@ -287,6 +287,11 @@ export default function PlayClient() {
     case "name_capture":
       body = (
         <InscriptionInput
+          // Distinct `key` per phase so React remounts InscriptionInput
+          // between name → email — otherwise its internal `value` state
+          // (the typed string) carries over from one screen to the next,
+          // and the email field shows up pre-populated with the name.
+          key="name-capture"
           prompt={"Before the tale begins —\nby what name will the griots sing you?"}
           placeholder="Your name"
           type="text"
@@ -311,6 +316,7 @@ export default function PlayClient() {
       // Act Interlude / Amina teaser.
       body = (
         <InscriptionInput
+          key="email-capture"
           prompt={"And by what scroll can the griot find you again,\nshould the tale carry across many moons?"}
           placeholder="your@email"
           type="email"
