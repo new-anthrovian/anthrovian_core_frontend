@@ -28,8 +28,11 @@ const ACT_COPY = {
   2: {
     label: "End of Act II",
     title: "Exile and Becoming",
+    // Three years in Mema — the end of Sundiata's quiet forming. Sogolon
+    // still walks; the Call to Return has not yet arrived. Those beats
+    // are Act III now (Scene 7 onward).
     summary:
-      "The grief was a river. But Sundiata — rivers are also roads. Sogolon is at peace, the twelve kings are listening, and the road bends home.",
+      "Three years in Mema have made you the lion the prophecy promised. Body, mind, and quiet — all forged in a borrowed kingdom. The Manden does not yet know it needs you. But it will.",
     awaitLine: "Act III — The Lion Rises — awaits",
     summoned: "The griot will summon you for Act III",
     capturePrompt:

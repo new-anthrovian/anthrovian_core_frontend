@@ -127,7 +127,10 @@ export interface Ending {
   id: EndingId;
   title: string;
   subtitle: string;
-  endingVideo: string;
+  /** Optional. When undefined, EndingScreen skips the video stage and
+   *  opens straight on the title + reflection card. Lets us ship the
+   *  game complete and slot the video in transparently when delivered. */
+  endingVideo?: string;
   poster: string;
   /** Narration shown over/after the ending video. Paragraphs separated by \n\n. */
   narration: string;
@@ -141,7 +144,10 @@ export interface Ending {
 /* ---------- Amina teaser ---------- */
 
 export interface AminaTeaser {
-  video: string;
+  /** Optional. When undefined, AminaTeaser opens on the narration stage
+   *  and skips the video step entirely. Same fallback pattern as
+   *  Ending.endingVideo. */
+  video?: string;
   poster: string;
   narration: string;
   ctaText: string;

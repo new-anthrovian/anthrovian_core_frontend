@@ -91,7 +91,12 @@ export default function InscriptionInput({
         <button
           type="submit"
           disabled={!canSubmit}
-          className="carved-btn carved-btn--wood anthro-serif max-w-sm text-center"
+          // !text-center forces the carved-btn's default left-align off —
+          // base .carved-btn is text-align:left for multi-line choice prose;
+          // the InscriptionInput submit is always a single word and needs
+          // to be centered. The Tailwind important modifier ensures this
+          // override wins regardless of CSS load order.
+          className="carved-btn carved-btn--wood anthro-serif max-w-sm !text-center"
         >
           {busy ? "…" : submitLabel}
         </button>

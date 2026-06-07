@@ -28,13 +28,19 @@ import {
 export const LEGACY_TIME_LIMIT_MS = 18 * 60 * 1000;
 
 /**
- * How many scenes are currently playable. ACTS I + II + the Krina battle
- * (Act III Scene 8). Scenes 1–8 — hunters_prophecy, mockery, iron_rod,
- * baobab, exile, mema, return, krina. Scene 9 (Final Moral) and the
- * endings still need videos; until those arrive, the act_interlude
- * fires after Scene 8 as an "Act III in progress" beat.
+ * How many scenes are currently playable. Currently SCENES.length (9) —
+ * every scene 1–9 is reachable, including Scene 9 (Final Moral Choice).
+ *
+ * Scene 9 setup + the 6 endings + the Amina teaser render as text-only
+ * for now (no video assets delivered yet — same fallback Iron Rod used
+ * before its video landed). When the videos arrive, slot them back into
+ * story-data and the text fallbacks step aside automatically.
+ *
+ * With ACTIVE_SCENE_COUNT === SCENES.length, the reducer's BRANCH_ENDED
+ * case flows past the act_interlude branch into legacy (if under the
+ * 18-minute Choice-10 window) or directly into the ending.
  */
-export const ACTIVE_SCENE_COUNT = 8;
+export const ACTIVE_SCENE_COUNT = SCENES.length;
 
 /* ---------- Initial state ---------- */
 
