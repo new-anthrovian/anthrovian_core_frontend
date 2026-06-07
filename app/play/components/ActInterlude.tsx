@@ -7,7 +7,10 @@ import InscriptionInput from "./InscriptionInput";
 
 /**
  * Per-act copy. Each entry covers the interlude shown AFTER `act` is
- * finished — `nextAct` is the one the player is waiting on. The email-
+ * finished. The act-3 entry is currently a PARTIAL beat because Scene 9
+ * (Final Moral) and the endings haven't been delivered yet — the copy
+ * names the krina battle as the latest landed beat. When the rest of
+ * Act III ships, this becomes the proper finale interlude. The email-
  * capture moment is shared across acts (waitlist + cross-device key).
  */
 const ACT_COPY = {
@@ -33,6 +36,20 @@ const ACT_COPY = {
       "End of Act II.\nAct III — The Lion Rises — awaits.\nWhere shall the griot send word when it begins?",
     submitLabel: "Summon me for Act III",
   },
+  3: {
+    // Partial — Scene 9 + endings not yet delivered. When they land,
+    // ACTIVE_SCENE_COUNT bumps past 8 and the player flows into Choice 9
+    // / the legacy moment / their ending instead of this interlude.
+    label: "Act III — In Progress",
+    title: "The Lion Rises",
+    summary:
+      "The cock’s spur has flown. Soumaoro Kanté’s invincibility cracks on the plains of Krina. But the smoking city of Sosso still stands before you — and the moral choice that will define the Maghan has not yet been made.",
+    awaitLine: "The Final Moral Choice awaits",
+    summoned: "The griot will summon you when the rest is sung",
+    capturePrompt:
+      "The battle of Krina is decided.\nThe moral fulcrum of Mali has not yet been crossed.\nWhere shall the griot send word when the rest is ready?",
+    submitLabel: "Summon me when the tale resumes",
+  },
 } as const;
 
 /**
@@ -48,7 +65,7 @@ export default function ActInterlude({
   savedEmail,
 }: {
   /** Which act just ended. Defaults to 1 for backward compatibility. */
-  act?: 1 | 2;
+  act?: 1 | 2 | 3;
   onReplay: () => void;
   onHome: () => void;
   onCaptureEmail?: (email: string) => void;

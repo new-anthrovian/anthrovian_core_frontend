@@ -69,6 +69,14 @@ export interface Scene {
   title: string;
   /** Setup video that plays before the choice. Omitted when no video exists yet. */
   setupVideo?: string;
+  /**
+   * Multi-part setup — a sequence of video URLs played back-to-back as
+   * one continuous opening beat. Used when the filmmaker delivered a
+   * scene's setup as two or more clips (e.g. Scene 7 setup pt 1+2).
+   * Mutually exclusive with `setupVideo` — if both are set, `setupVideos`
+   * wins.
+   */
+  setupVideos?: string[];
   /** Text-narration fallback shown when a scene has no setupVideo (e.g. Iron Rod). */
   setupNarration?: string;
   /** Still frame used as <video poster> and as the branch-narration backdrop. */
