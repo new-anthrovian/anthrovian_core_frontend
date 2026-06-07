@@ -243,6 +243,7 @@ export const SCENES: Scene[] = [
         text: "Defiance. I called out into the dark as we left — “I will return. And Niani will know my name.”",
         impact: { fadenya: 1 },
         tags: ["OPEN_EXILE"],
+        branchVideo: v("branch-05-a.mp4"),
         branchNarration:
           "Your voice rang out in the dark of Niani. No one answered. But the night heard you. And the night does not forget.\n\nTwo of your father’s old generals — men who had watched Sassouma’s cruelty with quiet disgust — stepped out of the shadows and fell in beside you without a word.\n\nYou had called out expecting nothing. You received everything. Because courage, announced into the dark, has a sound that certain people have been waiting all their lives to hear.",
       },
@@ -251,6 +252,9 @@ export const SCENES: Scene[] = [
         text: "Silence and resolve. I looked at my mother’s profile in the moonlight and swore silently — she will never suffer for me again.",
         impact: { badenya: 1 },
         tags: ["QUIET_EXILE"],
+        // Multi-part — the filmmaker delivered this Path B response as two
+        // back-to-back clips. Player sees them play seamlessly.
+        branchVideos: [v("branch-05-b-1.mp4"), v("branch-05-b-2.mp4")],
         branchNarration:
           "You said nothing. But Sogolon felt it anyway — the way mothers feel the things you decide not to say.\n\nShe reached out and took your hand. She held it for three steps. And then she let go — because she knew you needed both hands free for what was coming.\n\nYour sisters pressed close to you as you walked. Your little brother Manding Bory stumbled on a root and you caught him without looking. You were already the center of a world, Sundiata. Even in exile. Even walking away.",
       },
@@ -259,6 +263,7 @@ export const SCENES: Scene[] = [
         text: "A question. I stopped at the edge of the city and touched the ground — asking the earth to remember me.",
         impact: { nyama: 1 },
         tags: ["SPIRIT_EXILE"],
+        // No branch video delivered — renders as griot text over the poster.
         branchNarration:
           "You pressed your hand to the red earth of Niani one last time. And the earth pressed back.\n\nNot in anger. Not in sorrow. In recognition — the way a beloved face turns toward you in a crowd.\n\nYou rose and walked. But somewhere in the bones of the Manden, the earth noted your footsteps. And the direction they were going. And it began, in its slow geological patience, to wait for your return.",
       },
@@ -280,6 +285,7 @@ export const SCENES: Scene[] = [
         key: "A",
         text: "In the training ground. Every day until my hands bled and my body forgot what weakness was.",
         impact: { fadenya: 1 },
+        branchVideo: v("branch-06-a.mp4"),
         branchNarration:
           "The soldiers of Mema would tell the story for decades. That the prince of Niani trained through sickness, through heat, through the long months of rain. That he asked for harder opponents until the trainers ran out of harder.\n\nBy the third year — you were not a man to be trained anymore. You were the one they watched. You were the one who made Moussa Tounkara’s best generals feel, for the first time in years, appropriately humble.\n\nYour body had become an argument no one could refute.",
       },
@@ -287,6 +293,8 @@ export const SCENES: Scene[] = [
         key: "B",
         text: "Learning the court — and protecting those the court ignored. I became the prince Mema needed, not just the warrior I wanted to be.",
         impact: { badenya: 1 },
+        // Multi-part — delivered as two back-to-back clips.
+        branchVideos: [v("branch-06-b-1.mp4"), v("branch-06-b-2.mp4")],
         branchNarration:
           "The soldiers would remember your speed and strength. The people of Mema would remember something else.\n\nThey would remember the morning you stopped a soldier from taking a farmer’s last grain. The way you ate with the lowest-ranked soldiers — not to perform humility, but because you genuinely preferred their company.\n\nMoussa Tounkara watched all of this. And at the end of the third year, he told you his strategy for every battle he had ever fought. He said: “A king who earns loyalty never has to demand it. Remember that.” You did.",
       },
@@ -294,6 +302,7 @@ export const SCENES: Scene[] = [
         key: "C",
         text: "At the feet of Mema’s elders at night. Battle strategies, jinn lore, the language of signs. I prepared the mind before the body.",
         impact: { nyama: 1 },
+        branchVideo: v("branch-06-c.mp4"),
         branchNarration:
           "The elders of Mema had knowledge most had stopped seeking. Jinn lore — the systematic understanding of forces moving beneath the visible world. Battle proverbs that contained tactical genius in their poetry.\n\nYou drank it all. By the third year — you could read the mood of a battle before it began.\n\nYou understood why Soumaoro the Sorcerer was truly dangerous — not because of his power alone, but because he had made power synonymous with himself. That understanding would be the weapon that defeated him. Not iron. Not armies. Understanding.",
       },
