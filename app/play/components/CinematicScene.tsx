@@ -42,13 +42,16 @@ export default function CinematicScene({
         <motion.button
           type="button"
           onClick={onAdvance}
-          className="absolute inset-0 flex items-end justify-center pb-24"
+          className="anthro-serif absolute inset-0 flex flex-col items-center justify-end gap-3 pb-20 text-[var(--cream-dim)]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2 }}
           aria-label="Continue"
         >
           <span className="tap-dot" />
+          <span className="text-[0.95rem] italic tracking-wide [text-shadow:0_1px_8px_rgba(0,0,0,0.85)]">
+            Tap to continue
+          </span>
         </motion.button>
       )}
     </div>
