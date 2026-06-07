@@ -61,6 +61,10 @@ export default function PlayClient() {
   // sequence we're currently playing. Resets every time we enter a new
   // branch phase. Single-clip branches (`option.branchVideo`) ignore this.
   const [branchClipIndex, setBranchClipIndex] = useState(0);
+  // For multi-part setups (`scene.setupVideos`): same idea — which setup
+  // clip we're currently on. Resets every time we enter a new `scene`
+  // phase for a new scene index. Single-clip setups ignore this.
+  const [setupClipIndex, setSetupClipIndex] = useState(0);
   const choiceLock = useRef(false);
 
   const handleSetRate = useCallback((r: PlaybackRate) => {
@@ -129,6 +133,14 @@ export default function PlayClient() {
   useEffect(() => {
     if (state.phase === "branch") setBranchClipIndex(0);
   }, [state.phase, state.pendingBranch?.sceneId, state.pendingBranch?.choiceKey]);
+
+  /* ---- same for multi-part setups: reset whenever we enter `scene`
+        for a new scene index. Replays via REWATCH_SETUP also drop back
+        to clip 0 because the scene index hasn't changed but the phase
+        toggles choice → scene. ---- */
+  useEffect(() => {
+    if (state.phase === "scene") setSetupClipIndex(0);
+  }, [state.phase, state.sceneIndex]);
 
   /* ---- browser back opens the pause menu instead of leaving ---- */
   useEffect(() => {
@@ -345,7 +357,33 @@ export default function PlayClient() {
       break;
 
     case "scene":
-      if (scene?.setupVideo) {
+      // Multi-part setup — play each clip in `setupVideos` back-to-back,
+      // dispatch SCENE_VIDEO_ENDED only when the last clip finishes.
+      if (scene?.setupVideos && scene.setupVideos.length > 0) {
+        const setupClips = scene.setupVideos;
+        const safeIdx = Math.min(setupClipIndex, setupClips.length - 1);
+        const isLast = safeIdx === setupClips.length - 1;
+        body = (
+          <VideoStage
+            key={`scene-${state.sceneIndex}-${safeIdx}-${replayNonce}`}
+            src={setupClips[safeIdx]}
+            poster={scene.poster}
+            // Mid-sequence: prime the next clip. On the final clip: prime
+            // the next SCENE's setup video so the choice-then-portal beat
+            // has its asset warm.
+            nextSrc={isLast ? nextSceneVideo : setupClips[safeIdx + 1]}
+            paused={menuOpen}
+            playbackRate={playbackRate}
+            onEnded={() => {
+              if (isLast) {
+                dispatch({ type: "SCENE_VIDEO_ENDED" });
+              } else {
+                setSetupClipIndex((i) => i + 1);
+              }
+            }}
+          />
+        );
+      } else if (scene?.setupVideo) {
         body = (
           <VideoStage
             key={`scene-${state.sceneIndex}-${replayNonce}`}
@@ -465,7 +503,7 @@ export default function PlayClient() {
       // playable range. Today: ACTIVE_SCENE_COUNT = 7, last scene = "return"
       // (act 2). Bumps to 10 will resolve to act 3 automatically.
       const finishedScene = SCENES[ACTIVE_SCENE_COUNT - 1];
-      const finishedAct = (finishedScene?.act ?? 1) as 1 | 2;
+      const finishedAct = (finishedScene?.act ?? 1) as 1 | 2 | 3;
       body = (
         <ActInterlude
           act={finishedAct}

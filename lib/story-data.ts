@@ -315,8 +315,10 @@ export const SCENES: Scene[] = [
     act: 2,
     index: 7,
     title: "The Call to Return",
-    setupVideo: v("scene-07-return.mp4"),
-    poster: poster("scene-07-return.jpg"),
+    // Multi-part setup — delivered as two back-to-back clips covering
+    // the news of Niani's burning and the people's plea for the Maghan.
+    setupVideos: [v("scene-07-return-1.mp4"), v("scene-07-return-2.mp4")],
+    poster: poster("scene-07-return-1.jpg"),
     scored: true,
     prompt:
       "Sogolon is gone. The people are calling. The road is open.\n\nHow do you answer?",
@@ -325,6 +327,7 @@ export const SCENES: Scene[] = [
         key: "A",
         text: "I leave within the hour. Alone if no one will follow. The Manden will not wait for me to prepare.",
         impact: { fadenya: 1 },
+        branchVideo: v("branch-07-a.mp4"),
         branchNarration:
           "You left within the hour. Moussa Tounkara tried to give you a cavalry escort. You said: “Let them come if they choose to. I will not wait.”\n\nTwelve men followed you out of the gate that evening. By the time you had walked three days west — the news of your return traveling ahead of you like fire through dry grass — you had three hundred.\n\nBy the time you reached the borderlands of the Manden — twelve kings had sent messengers. Not because you had asked them. Because no one wanted to be standing on the wrong side of the road when the lion passed.",
       },
@@ -332,6 +335,7 @@ export const SCENES: Scene[] = [
         key: "B",
         text: "I grieve three days — as my mother deserves. Then I send messengers to every allied king before I move. I return with an army of allies, not just a warrior.",
         impact: { badenya: 1 },
+        branchVideo: v("branch-07-b.mp4"),
         branchNarration:
           "Three days you grieved. Properly. Completely. You washed your mother’s body yourself, with your own hands. You sat at her grave until the morning of the fourth day.\n\nAnd then — dry-eyed and clear — you began to work. You sent thirty messengers in thirty directions. Your message to each was the same single sentence: “Sogolon’s son is coming home.” That was enough.\n\nSoumaoro had soldiers. You had conviction. And conviction, in the mathematics of destiny, outweighs iron.",
       },
@@ -339,6 +343,9 @@ export const SCENES: Scene[] = [
         key: "C",
         text: "Before I leave Mema, I perform the proper ritual. I ask the earth, I consult the soothsayer at the river. I return when the signs align — and they do, within the week.",
         impact: { nyama: 1 },
+        // Multi-part — delivered as the soothsayer scene + the cock's spur
+        // revelation back-to-back.
+        branchVideos: [v("branch-07-c-1.mp4"), v("branch-07-c-2.mp4")],
         branchNarration:
           "You went to the river soothsayer — an old woman who had been reading the Manden’s future for forty years in patterns of river foam. She looked at you for a long time. Then she said: “Not yet. Three days.”\n\nOn the third day — a delegation arrived from the twelve kings. They brought your father’s griot Balla Fasséké, escaped from Soumaoro. And he brought the secret of Soumaoro’s power: a cock’s spur on an arrow.\n\nThe soothsayer’s three days had found you the weapon no army could have captured. And the war would be decided by wisdom.",
       },
@@ -375,6 +382,7 @@ export const SCENES: Scene[] = [
         key: "C",
         text: "We use Nana Triban’s arrow. I position our archers, choose the moment of spiritual vulnerability — and neutralize his Nyama before the armies even meet.",
         impact: { nyama: 1 },
+        branchVideo: v("branch-08-c.mp4"),
         branchNarration:
           "Your sister Nana Triban — held in Soumaoro’s court — had escaped to you carrying the secret she had spent years learning. A cock’s spur on an arrow, fired in the moment of Soumaoro’s ritual vulnerability.\n\nYou watched the battle’s opening movements from the ridge. Not from fear — from calculation. You waited. And then — between his fourth and fifth steps — you saw it. The gap. The exhale between his power and his protection.\n\n“Now,” you said. The arrow flew. It struck. And Soumaoro Kanté — the unconquered Sorcerer-King — understood that he had an enemy who had studied him more carefully than he had studied himself. The battle was over by afternoon.",
       },
