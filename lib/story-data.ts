@@ -312,7 +312,12 @@ export const SCENES: Scene[] = [
   /* ----- SCENE 7 — THE CALL TO RETURN ----- */
   {
     id: "return",
-    act: 2,
+    // Categorized as Act III because the filmmaker delivered Scene 7's
+    // videos in the Act III batch and the narrative beat (Sogolon's death,
+    // the people calling Sundiata home, the road bending toward war) is
+    // the start of the rise rather than the end of the becoming. Act II
+    // is therefore Scenes 5–6 (Exile + Mema); Act III is 7–9.
+    act: 3,
     index: 7,
     title: "The Call to Return",
     // Multi-part setup — delivered as two back-to-back clips covering
