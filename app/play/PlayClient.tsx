@@ -7,6 +7,7 @@ import "./game.css";
 import {
   gameReducer,
   initialGameState,
+  ACTIVE_SCENE_COUNT,
 } from "@/lib/story-engine";
 import {
   GRIOT_INTRO,
@@ -56,6 +57,10 @@ export default function PlayClient() {
   const [replayNonce, setReplayNonce] = useState(0);
   // Griot voice playback speed (videos have baked-in audio).
   const [playbackRate, setPlaybackRate] = useState<number>(1);
+  // For multi-part branches (`option.branchVideos`): which clip in the
+  // sequence we're currently playing. Resets every time we enter a new
+  // branch phase. Single-clip branches (`option.branchVideo`) ignore this.
+  const [branchClipIndex, setBranchClipIndex] = useState(0);
   const choiceLock = useRef(false);
 
   const handleSetRate = useCallback((r: PlaybackRate) => {
@@ -117,6 +122,13 @@ export default function PlayClient() {
     saveGame(state);
     syncProgress(state);
   }, [state, hydrated]);
+
+  /* ---- reset multi-part branch clip index whenever we re-enter the
+        branch phase or the branch target changes. Single-clip branches
+        ignore this; multi-part branches start from clip 0 every time. ---- */
+  useEffect(() => {
+    if (state.phase === "branch") setBranchClipIndex(0);
+  }, [state.phase, state.pendingBranch?.sceneId, state.pendingBranch?.choiceKey]);
 
   /* ---- browser back opens the pause menu instead of leaving ---- */
   useEffect(() => {
@@ -393,7 +405,35 @@ export default function PlayClient() {
       const option = branchScene?.choices?.find(
         (c) => c.key === pb?.choiceKey
       );
-      if (option?.branchVideo) {
+
+      // Multi-part branch — play each clip in `branchVideos` back-to-back.
+      // When the last clip ends, dispatch BRANCH_ENDED. Mid-sequence end
+      // events just advance the index, which (via the `key` prop) remounts
+      // VideoStage on the next URL.
+      if (option?.branchVideos && option.branchVideos.length > 0) {
+        const clips = option.branchVideos;
+        const safeIdx = Math.min(branchClipIndex, clips.length - 1);
+        const isLast = safeIdx === clips.length - 1;
+        body = (
+          <VideoStage
+            key={`branch-${state.sceneIndex}-${safeIdx}-${replayNonce}`}
+            src={clips[safeIdx]}
+            poster={branchScene?.poster}
+            // Prime the buffer for the next clip in the sequence; once on
+            // the final clip, prime the next SCENE's setup video instead.
+            nextSrc={isLast ? nextSceneVideo : clips[safeIdx + 1]}
+            paused={menuOpen}
+            playbackRate={playbackRate}
+            onEnded={() => {
+              if (isLast) {
+                dispatch({ type: "BRANCH_ENDED" });
+              } else {
+                setBranchClipIndex((i) => i + 1);
+              }
+            }}
+          />
+        );
+      } else if (option?.branchVideo) {
         body = (
           <VideoStage
             key={`branch-${state.sceneIndex}-${replayNonce}`}
@@ -418,9 +458,17 @@ export default function PlayClient() {
       break;
     }
 
-    case "act_interlude":
+    case "act_interlude": {
+      // Which act just finished — derived from the last playable scene.
+      // The reducer sends us here only when nextIndex >= ACTIVE_SCENE_COUNT,
+      // so SCENES[ACTIVE_SCENE_COUNT - 1] is the final scene of the current
+      // playable range. Today: ACTIVE_SCENE_COUNT = 7, last scene = "return"
+      // (act 2). Bumps to 10 will resolve to act 3 automatically.
+      const finishedScene = SCENES[ACTIVE_SCENE_COUNT - 1];
+      const finishedAct = (finishedScene?.act ?? 1) as 1 | 2;
       body = (
         <ActInterlude
+          act={finishedAct}
           onReplay={handleReplay}
           onHome={handleHome}
           savedEmail={state.playerEmail}
@@ -431,6 +479,7 @@ export default function PlayClient() {
         />
       );
       break;
+    }
 
     case "legacy":
       body = (
