@@ -311,7 +311,7 @@ export default function PlayClient() {
       // Act Interlude / Amina teaser.
       body = (
         <InscriptionInput
-          prompt={"And by what scroll can the griot find you again,\nshould the tale carry across many moons?"}
+          prompt={"And by what email may the griot find you again,\nshould the tale carry across many moons?"}
           placeholder="your@email"
           type="email"
           submitLabel="Continue"
