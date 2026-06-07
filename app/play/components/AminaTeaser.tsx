@@ -26,7 +26,12 @@ export default function AminaTeaser({
   savedEmail?: string | null;
   playbackRate?: number;
 }) {
-  const [stage, setStage] = useState<"video" | "narration" | "cta">("video");
+  // Skip the video stage when AMINA.video isn't delivered yet —
+  // open straight on the griot's closing narration. Same pattern as
+  // EndingScreen's video fallback.
+  const [stage, setStage] = useState<"video" | "narration" | "cta">(
+    AMINA.video ? "video" : "narration"
+  );
   const [submitted, setSubmitted] = useState<boolean>(!!savedEmail);
 
   const exits = (
@@ -50,7 +55,7 @@ export default function AminaTeaser({
 
   return (
     <div className="absolute inset-0">
-      {stage === "video" && (
+      {stage === "video" && AMINA.video && (
         <VideoStage
           src={AMINA.video}
           poster={AMINA.poster}

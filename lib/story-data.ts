@@ -400,7 +400,12 @@ export const SCENES: Scene[] = [
     act: 3,
     index: 9,
     title: "The Final Moral Choice",
-    setupVideo: v("scene-09-final-moral.mp4"),
+    // No setupVideo delivered yet — renders as griot text over the
+    // poster. Same fallback pattern Iron Rod used before its video
+    // landed. Slot in `setupVideo` (or `setupVideos`) when the
+    // filmmaker delivers the Sosso-aftermath cinematic.
+    setupNarration:
+      "The Battle of Krina was over. Soumaoro Kanté had fled — into the caves of Koulikoro, swallowed by the mountain. Some say he became the mountain itself. Some say he wanders still, a spirit without anchor.\n\nAll that matters for today's story is this: his army had surrendered. His city of Sosso — the capital of all his cruelty — stood before you. Still burning. The twelve kings were waiting for your word.\n\nThis was the moment the entire journey had been building to. Not the battle. This.\n\nBecause anyone can win a battle with enough strength and strategy. What you do AFTER the battle — that is what they sing about for eight centuries.\n\nThe people of Sosso — the ordinary people who did not choose their king — were hiding in their homes. Soumaoro's soldiers — men conscripted, who had fought from fear — were kneeling in the dust. The city was yours.\n\nWhat you do next — the kind of king you are — that begins here.",
     poster: poster("scene-09-final-moral.jpg"),
     scored: true,
     prompt:
@@ -461,12 +466,16 @@ export const LEGACY_CHOICE: LegacyChoice = {
 
 /* ---------- Endings ---------- */
 
+// Ending videos: none delivered yet. EndingScreen falls back to the
+// title + variable visualizer + narration + reflection-card layout
+// when `endingVideo` is undefined. Slot the v() refs back in as
+// `endingVideo: v("ending-<id>.mp4"),` when the filmmaker delivers
+// the 6 ending cinematics (plus the Amina teaser below).
 export const ENDINGS: Record<EndingId, Ending> = {
   true_lion_king: {
     id: "true_lion_king",
     title: "The True Lion King",
     subtitle: "The Maghan of Mali",
-    endingVideo: v("ending-true-lion-king.mp4"),
     poster: poster("ending-true-lion-king.jpg"),
     narration:
       "This is the ending the griots return to when they want to remind the Manden what it is capable of.\n\nYou built it. Not alone — you were never alone. But you were the center that held. The Manden Charter — the covenant you forged with the twelve kings — became the foundation. The belief that power is only legitimate when it serves the people it holds.\n\nMali flourished. Trade routes opened like rivers finding the sea. Your mother’s grave stood beneath the great replanted baobab. Children played in its roots. They did not know they were playing in a legend. That is how the best legends work.\n\nThe griots would sing your name for eight hundred years. They are singing it now. Do you hear it?",
@@ -483,7 +492,6 @@ export const ENDINGS: Record<EndingId, Ending> = {
     id: "iron_lion",
     title: "The Iron Lion",
     subtitle: "The Warrior Without Mercy",
-    endingVideo: v("ending-iron-lion.mp4"),
     poster: poster("ending-iron-lion.jpg"),
     narration:
       "You won. That is not a small thing. Mali exists because you would not be stopped. You rose when no one believed you would stand. You charged when strategy said wait. You burned what needed to be burned.\n\nBut. The Manden Charter — you wrote it. The twelve kings signed it. And then they watched you govern. What they saw was a king of extraordinary power and compressed patience. Who sometimes burned what could have been bent.\n\nThe griots will call you The Iron Lion. They will say your name with respect — and with a certain careful distance. Because fire that has no memory of warmth is still fire. But it forgets, sometimes, what it was burning for.\n\nYou built Mali. You protected it. And somewhere, in the long quiet of a successful reign — you would ask yourself a question you couldn’t answer: Is victory enough?",
@@ -500,7 +508,6 @@ export const ENDINGS: Record<EndingId, Ending> = {
     id: "wise_builder",
     title: "The Wise Builder",
     subtitle: "The Custodian of the Covenant",
-    endingVideo: v("ending-wise-builder.mp4"),
     poster: poster("ending-wise-builder.jpg"),
     narration:
       "The covenant. That is what they will remember first. Not the battles — though the battles were real. The covenant.\n\nThe Manden Charter — which you insisted upon, which you protected over the protests of generals who wanted simpler power — it became the document that changed what the Manden believed was possible. Rights for the ordinary people. Limits on what kings could demand. Protection for strangers, for women, for those without weapons.\n\nScholars in the twenty-first century will call it one of the first human rights declarations in recorded history. And they will trace it back to a decision you made after a battle when you could have done anything. And you chose to write down what was right.\n\nThe griots will call you The Custodian of the Covenant. You built something that outlasted you. That is the only real victory.",
@@ -517,7 +524,6 @@ export const ENDINGS: Record<EndingId, Ending> = {
     id: "sorcerer_king",
     title: "The Sorcerer-King",
     subtitle: "The Master of Nyama",
-    endingVideo: v("ending-sorcerer-king.mp4"),
     poster: poster("ending-sorcerer-king.jpg"),
     narration:
       "They said you were otherworldly. And they were not wrong — but they misunderstood what that meant. You did not deal in fear-magic. You were nothing like Soumaoro.\n\nWhat you had — what you cultivated across every year of exile, every careful consultation — was understanding. Deep understanding. The kind that takes lifetimes to accumulate. The jinn of the Manden respected you. Not because you commanded them. Because you listened.\n\nYour reign was quiet in the way that deep wells are quiet — all the activity hidden. You ended conflicts before they became wars. You chose allies not by their declarations but by the quality of their silences.\n\nThe griots call you The Master of Nyama. In a world that shouts to be heard — you learned to listen your way to wisdom. And the ancestors whisper your name to each other. Even now.",
@@ -533,7 +539,6 @@ export const ENDINGS: Record<EndingId, Ending> = {
     id: "seeking_son",
     title: "The Seeking Son",
     subtitle: "The Unready Heir",
-    endingVideo: v("ending-seeking-son.mp4"),
     poster: poster("ending-seeking-son.jpg"),
     narration:
       "You are not ready. And that is not a failure.\n\nThe iron is still straight in your hands. The baobab still stands. The road is still open. But something — fear, or uncertainty, or the weight of choosing — kept you between the paths.\n\nHere is what the griots know that they do not always say: Sundiata did not rise in a single day. He fell many times on the road to standing. He doubted. He grieved. He sat in dust while the world moved around him.\n\nThe legend is not about a man who was always ready. It is about a man who, eventually, chose to become ready. Come back. Take a different path. Let yourself choose more completely.\n\nThe lion is in you. He is simply waiting for you to stop being afraid of him.",
@@ -549,7 +554,6 @@ export const ENDINGS: Record<EndingId, Ending> = {
     id: "mothers_hidden_lion",
     title: "The Mother's Hidden Lion",
     subtitle: "The Heart of Sogolon",
-    endingVideo: v("ending-mothers-hidden-lion.mp4"),
     poster: poster("ending-mothers-hidden-lion.jpg"),
     isSecret: true,
     narration:
@@ -566,7 +570,9 @@ export const ENDINGS: Record<EndingId, Ending> = {
 /* ---------- Amina teaser ---------- */
 
 export const AMINA: AminaTeaser = {
-  video: v("amina-teaser.mp4"),
+  // Video not delivered yet — AminaTeaser opens on the narration stage
+  // when undefined. Slot back in as `video: v("amina-teaser.mp4"),`
+  // when the filmmaker delivers the teaser cinematic.
   poster: poster("amina-teaser.jpg"),
   narration:
     "Eight hundred years after the lion of Niani walked… far to the north — in a kingdom called Zazzau, in the land you would one day call Nigeria — a girl was born.\n\nThey said she was born with a war fetish clutched in her infant hand. Her grandmother named her after the grandmother that came before — a name that meant: ‘one who has her own.’\n\nShe would grow to become: Queen. Warrior. Conqueror of fourteen years of continuous victory. Builder of the walls they still call by her name. Queen Amina of Zazzau.\n\nAnd on the night before her greatest battle — her griot would sing her the story of the boy who could not walk — who stood — who roared — who built a world — and she would say, very quietly: “Good. I have something to prove worthy of.”\n\nHer story is coming. But tonight — you carried the first one. And the Manden thanks you for it.",
