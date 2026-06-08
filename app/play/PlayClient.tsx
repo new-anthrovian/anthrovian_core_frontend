@@ -39,6 +39,7 @@ import PauseMenu from "./components/PauseMenu";
 import InscriptionInput from "./components/InscriptionInput";
 import SpeedControl, { type PlaybackRate } from "./components/SpeedControl";
 import OrientationHint from "./components/OrientationHint";
+import ActOpenerBanner from "./components/ActOpenerBanner";
 
 const RATE_KEY = "anthrovian-playback-rate";
 
@@ -65,6 +66,14 @@ export default function PlayClient() {
   // clip we're currently on. Resets every time we enter a new `scene`
   // phase for a new scene index. Single-clip setups ignore this.
   const [setupClipIndex, setSetupClipIndex] = useState(0);
+  // Brief gold banner that fades in over the scene's setup video when
+  // the player crosses into a new act. `null` means no banner showing.
+  const [actBanner, setActBanner] = useState<1 | 2 | 3 | null>(null);
+  // The highest act we've already announced this playthrough — prevents
+  // re-firing on REWATCH_SETUP, dev step-back, or going back to a scene
+  // within the same act. Initialized to 0 so the first scene fires the
+  // Act I banner.
+  const lastAnnouncedActRef = useRef<number>(0);
   const choiceLock = useRef(false);
 
   const handleSetRate = useCallback((r: PlaybackRate) => {
@@ -140,6 +149,20 @@ export default function PlayClient() {
         toggles choice → scene. ---- */
   useEffect(() => {
     if (state.phase === "scene") setSetupClipIndex(0);
+  }, [state.phase, state.sceneIndex]);
+
+  /* ---- act-opener banner: fire when entering the first scene of a new
+        act. Compares against a ref so REWATCH_SETUP and dev step-back
+        never re-fire it, but loading a save mid-act still shows the
+        relevant banner (lastAnnouncedActRef resets on PlayClient mount). ---- */
+  useEffect(() => {
+    if (state.phase !== "scene") return;
+    const currentAct = SCENES[state.sceneIndex]?.act;
+    if (!currentAct || currentAct <= lastAnnouncedActRef.current) return;
+    lastAnnouncedActRef.current = currentAct;
+    setActBanner(currentAct);
+    const t = setTimeout(() => setActBanner(null), 3200);
+    return () => clearTimeout(t);
   }, [state.phase, state.sceneIndex]);
 
   /* ---- browser back opens the pause menu instead of leaving ---- */
@@ -668,6 +691,11 @@ export default function PlayClient() {
           </span>
         </div>
       )}
+
+      {/* Brief "Act II — Exile and Becoming" style banner over the
+          scene video when crossing into a new act. Pointer-events-none
+          so it doesn't block taps. */}
+      {actBanner !== null && <ActOpenerBanner act={actBanner} />}
 
       {/* Mobile-only nudge to rotate; self-gates + auto-hides on landscape. */}
       <OrientationHint />
