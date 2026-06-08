@@ -35,7 +35,7 @@ export const VIDEO_BASE = RAW_VIDEO_BASE.replace(/\/+$/, "");
  * and the edge cache to refetch. Bump this whenever videos are
  * re-encoded or replaced at the same key.
  */
-const ASSET_VERSION = "4";
+const ASSET_VERSION = "5";
 
 const v = (name: string) => `${VIDEO_BASE}/${name}?v=${ASSET_VERSION}`;
 const poster = (name: string) => `${VIDEO_BASE}/posters/${name}?v=${ASSET_VERSION}`;
@@ -320,9 +320,20 @@ export const SCENES: Scene[] = [
     act: 3,
     index: 7,
     title: "The Call to Return",
-    // Multi-part setup — delivered as two back-to-back clips covering
-    // the news of Niani's burning and the people's plea for the Maghan.
-    setupVideos: [v("scene-07-return-1.mp4"), v("scene-07-return-2.mp4")],
+    // Multi-part setup — three back-to-back clips covering the full
+    // arc of the call to return:
+    //   -1: Niani burns (Soumaoro's news arrives at Mema)
+    //   -2: The delegation pleads ("the people have remembered the prophecy")
+    //   -3: Sogolon dies ("as if she had held on only long enough to see
+    //                       the call arrive")
+    // The -3 clip used to be embedded inside the Path A branch video — so
+    // players who picked B or C never saw Sogolon's death. Now every
+    // player sees it as part of the setup, before they choose.
+    setupVideos: [
+      v("scene-07-return-1.mp4"),
+      v("scene-07-return-2.mp4"),
+      v("scene-07-return-3.mp4"),
+    ],
     poster: poster("scene-07-return-1.jpg"),
     scored: true,
     prompt:
