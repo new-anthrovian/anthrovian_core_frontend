@@ -402,6 +402,82 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
+      {/* ── SECTION 11: CONTACT US ───────────────────────────────────── */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="bg-[#0D0806] py-24 px-6 border-t border-[#F6DFB6]/5"
+      >
+        <div className="max-w-xl mx-auto">
+          <motion.div variants={fadeInUp} className="text-center mb-12">
+            <h2 className="font-pt-serif font-bold text-[#F6DFB6] text-[32px] md:text-[44px] leading-tight mb-4">
+              Connect with us
+            </h2>
+            <p className="font-inter text-[#D4B896]/60 text-[16px]">
+              Have a question or want to share a story? We&apos;d love to hear from you.
+            </p>
+          </motion.div>
+
+          <motion.form
+            variants={fadeInUp}
+            action="https://formspree.io/f/xeewkplv"
+            method="POST"
+            className="space-y-6"
+          >
+            <div className="space-y-2">
+              <label htmlFor="name" className="block font-inter text-[#D4B896]/80 text-sm uppercase tracking-wider">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                className="w-full bg-white/5 border border-[#F6DFB6]/10 rounded-lg px-4 py-3 text-[#F6DFB6] font-inter focus:outline-none focus:border-[#E8623A]/50 transition-colors"
+                placeholder="Your name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="email" className="block font-inter text-[#D4B896]/80 text-sm uppercase tracking-wider">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                className="w-full bg-white/5 border border-[#F6DFB6]/10 rounded-lg px-4 py-3 text-[#F6DFB6] font-inter focus:outline-none focus:border-[#E8623A]/50 transition-colors"
+                placeholder="your@email.com"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="message" className="block font-inter text-[#D4B896]/80 text-sm uppercase tracking-wider">
+                Message
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows={4}
+                className="w-full bg-white/5 border border-[#F6DFB6]/10 rounded-lg px-4 py-3 text-[#F6DFB6] font-inter focus:outline-none focus:border-[#E8623A]/50 transition-colors resize-none"
+                placeholder="How can we help?"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-[#E8623A] hover:bg-[#ff7a53] text-white font-pt-serif font-bold py-4 rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-[#E8623A]/20"
+            >
+              Send Message
+            </button>
+          </motion.form>
+        </div>
+      </motion.section>
+
     </div>
   );
 }
