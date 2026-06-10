@@ -35,7 +35,7 @@ export const VIDEO_BASE = RAW_VIDEO_BASE.replace(/\/+$/, "");
  * and the edge cache to refetch. Bump this whenever videos are
  * re-encoded or replaced at the same key.
  */
-const ASSET_VERSION = "6";
+const ASSET_VERSION = "7";
 
 const v = (name: string) => `${VIDEO_BASE}/${name}?v=${ASSET_VERSION}`;
 const poster = (name: string) => `${VIDEO_BASE}/posters/${name}?v=${ASSET_VERSION}`;
@@ -384,6 +384,7 @@ export const SCENES: Scene[] = [
         key: "A",
         text: "We charge. Direct assault — full cavalry, wave after wave. Break their center. Give Soumaoro no time to breathe.",
         impact: { fadenya: 1 },
+        branchVideo: v("branch-08-a.mp4"),
         branchNarration:
           "The charge was like thunder answering itself. Your cavalry split three ways — left flank, right flank, and you — directly through the center.\n\nSoumaoro’s sorcery was real. The first wave hit a wall of invisible force. But you kept riding. Because you understood something about fear: it depends on you stopping. Keep moving, and fear becomes wind.\n\nYou cut through the center. Soumaoro saw you coming. And for the first time in a decade of unopposed conquest — he hesitated. That hesitation cost him everything.",
       },
@@ -391,6 +392,7 @@ export const SCENES: Scene[] = [
         key: "B",
         text: "I speak first. Before any sword is drawn — I address the twelve kings in council. Bind their loyalty with words and covenant so that no man breaks ranks when the sorcery hits.",
         impact: { badenya: 1 },
+        branchVideo: v("branch-08-b.mp4"),
         branchNarration:
           "Before anyone drew a sword, you called the twelve kings together. They came — suspicious of each other, their old rivalries like live coals under the surface.\n\nYou said: “I am not asking you to fight for me. I am asking you to fight for the Manden. When we win — none of you will bow to me. We will build a covenant. Together. The Manden Charter.”\n\nSilence. Then the eldest of the twelve kings stood: “I follow the Maghan.” One by one, the others rose. When Soumaoro’s army saw twelve kings advancing as a single force — the sorcery faltered. Because Nyama draws on the fractures between people. And you had sealed every fracture.",
       },
