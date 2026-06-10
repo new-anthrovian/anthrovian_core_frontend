@@ -44,6 +44,19 @@ import ActOpenerBanner from "./components/ActOpenerBanner";
 const RATE_KEY = "anthrovian-playback-rate";
 
 /**
+ * Hold the video element on its last frame this many ms after `ended`
+ * fires, before swapping to the choice / portal phase. Without this hold
+ * the immediate phase swap reads as the video being chopped off — the
+ * <video> element vanishes and the choice screen's poster (the FIRST
+ * frame of the video, not the last) replaces it instantly. Adding a
+ * brief hold lets the player perceive the end of the scene before the
+ * UI changes. Applies to BOTH single-clip and the final clip of
+ * multi-part setup/branch sequences. Mid-sequence multi-part transitions
+ * are seamless cuts and do NOT use this hold.
+ */
+const VIDEO_END_HOLD_MS = 1000;
+
+/**
  * The whole game. Single-page state machine: griot intro ->
  * personalization -> 9 scenes -> (Choice 10) -> ending -> Amina.
  * The reducer is pure; localStorage + decision-sync side effects live
@@ -74,7 +87,28 @@ export default function PlayClient() {
   // within the same act. Initialized to 0 so the first scene fires the
   // Act I banner.
   const lastAnnouncedActRef = useRef<number>(0);
+  // Pending VIDEO_END_HOLD_MS timer id. Stashed so we can clear it if the
+  // player navigates away (REWATCH_SETUP, pause menu, route change) before
+  // the timer fires — otherwise the timer would prematurely dispatch into
+  // a stale phase.
+  const endHoldTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const choiceLock = useRef(false);
+
+  /** Schedule the SCENE_VIDEO_ENDED / BRANCH_ENDED dispatch after the
+   *  end-of-video hold. Always cancels any previously-pending timer so
+   *  rapid replays / phase changes can't stack stale dispatches. */
+  const scheduleEndDispatch = useCallback(
+    (action: { type: "SCENE_VIDEO_ENDED" } | { type: "BRANCH_ENDED" }) => {
+      if (endHoldTimerRef.current !== null) {
+        clearTimeout(endHoldTimerRef.current);
+      }
+      endHoldTimerRef.current = setTimeout(() => {
+        endHoldTimerRef.current = null;
+        dispatch(action);
+      }, VIDEO_END_HOLD_MS);
+    },
+    []
+  );
 
   const handleSetRate = useCallback((r: PlaybackRate) => {
     setPlaybackRate(r);
@@ -149,6 +183,19 @@ export default function PlayClient() {
         toggles choice → scene. ---- */
   useEffect(() => {
     if (state.phase === "scene") setSetupClipIndex(0);
+  }, [state.phase, state.sceneIndex]);
+
+  /* ---- clear any pending end-of-video hold timer when phase changes
+        or PlayClient unmounts. Protects against a timer firing into a
+        stale phase (e.g. user opens pause menu before the hold expires,
+        or navigates away). ---- */
+  useEffect(() => {
+    return () => {
+      if (endHoldTimerRef.current !== null) {
+        clearTimeout(endHoldTimerRef.current);
+        endHoldTimerRef.current = null;
+      }
+    };
   }, [state.phase, state.sceneIndex]);
 
   /* ---- act-opener banner: fire when entering the first scene of a new
@@ -405,8 +452,11 @@ export default function PlayClient() {
             playbackRate={playbackRate}
             onEnded={() => {
               if (isLast) {
-                dispatch({ type: "SCENE_VIDEO_ENDED" });
+                // Hold on the last frame before swapping to choice phase
+                // (see VIDEO_END_HOLD_MS comment near the top of the file).
+                scheduleEndDispatch({ type: "SCENE_VIDEO_ENDED" });
               } else {
+                // Mid-sequence — seamless cut to the next setup clip.
                 setSetupClipIndex((i) => i + 1);
               }
             }}
@@ -421,7 +471,9 @@ export default function PlayClient() {
             nextSrc={nextSceneVideo}
             paused={menuOpen}
             playbackRate={playbackRate}
-            onEnded={() => dispatch({ type: "SCENE_VIDEO_ENDED" })}
+            onEnded={() =>
+              scheduleEndDispatch({ type: "SCENE_VIDEO_ENDED" })
+            }
           />
         );
       } else if (scene?.setupNarration) {
@@ -493,8 +545,11 @@ export default function PlayClient() {
             playbackRate={playbackRate}
             onEnded={() => {
               if (isLast) {
-                dispatch({ type: "BRANCH_ENDED" });
+                // Hold on the last frame before the portal/next-scene
+                // transition (see VIDEO_END_HOLD_MS).
+                scheduleEndDispatch({ type: "BRANCH_ENDED" });
               } else {
+                // Mid-sequence — seamless cut to the next branch clip.
                 setBranchClipIndex((i) => i + 1);
               }
             }}
@@ -509,7 +564,9 @@ export default function PlayClient() {
             nextSrc={nextSceneVideo}
             paused={menuOpen}
             playbackRate={playbackRate}
-            onEnded={() => dispatch({ type: "BRANCH_ENDED" })}
+            onEnded={() =>
+              scheduleEndDispatch({ type: "BRANCH_ENDED" })
+            }
           />
         );
       } else if (option) {
