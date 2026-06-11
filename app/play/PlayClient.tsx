@@ -681,6 +681,31 @@ export default function PlayClient() {
   const showMenuButton = !["act_interlude", "ending", "reflection", "amina"].includes(
     state.phase
   );
+
+  // Kora mute button shows only on screens where the kora is actually
+  // playing. Mirrors the (de)render conditions of `useKoraAmbient` in
+  // GriotTextOverlay + EndingScreen + AminaTeaser:
+  //   - scene phase with text-only setup (no setupVideo/setupVideos)
+  //   - branch phase with text-only response (no branchVideo/branchVideos)
+  //   - ending/reflection card stage (every ending except the two with
+  //     explicit non-kora sound design)
+  //   - amina phase (narration substage uses GriotTextOverlay; the brief
+  //     CTA substage is a minor false-positive we accept rather than
+  //     plumbing AminaTeaser substage state up to the cluster)
+  const koraSuppressedEndings = ["iron_lion", "mothers_hidden_lion"];
+  const isKoraPlaying =
+    (state.phase === "scene" &&
+      !!scene?.setupNarration &&
+      !scene?.setupVideo &&
+      !(scene?.setupVideos && scene.setupVideos.length > 0)) ||
+    (state.phase === "branch" &&
+      !!branchOpt &&
+      !branchOpt.branchVideo &&
+      !(branchOpt.branchVideos && branchOpt.branchVideos.length > 0)) ||
+    ((state.phase === "ending" || state.phase === "reflection") &&
+      !!state.endingId &&
+      !koraSuppressedEndings.includes(state.endingId)) ||
+    state.phase === "amina";
   const canReplay = ["griot_intro", "scene", "cinematic", "branch", "choice"].includes(
     state.phase
   );
@@ -699,12 +724,12 @@ export default function PlayClient() {
       )}
 
       {/* Google-Meet-style control cluster, bottom-right. The kora mute
-          button shows whenever the cluster is visible — even if no kora
-          is currently playing, the toggle proactively affects any kora
-          that starts later (text overlays, ending card stage). */}
-      {(showSpeed || showMenuButton) && !menuOpen && (
+          button only shows on screens where the kora is actually playing
+          (see `isKoraPlaying` above) — including ending/amina phases that
+          otherwise have no cluster, since those are the longest kora beats. */}
+      {(showSpeed || showMenuButton || isKoraPlaying) && !menuOpen && (
         <div className="absolute bottom-4 right-4 z-30 flex items-center gap-2.5">
-          <KoraMuteButton />
+          {isKoraPlaying && <KoraMuteButton />}
           {showSpeed && (
             <SpeedControl rate={playbackRate} onChange={handleSetRate} />
           )}
