@@ -34,18 +34,29 @@ export function setKoraMuted(muted: boolean): void {
 }
 
 /**
- * Mount-scoped looping kora playback. Drop into any component that
- * occupies the screen during a "silent" beat (text overlays, card
- * stages). The hook handles:
- *   - autoplay with a quiet ~1s volume fade-in on mount
- *   - ~0.6s fade-out on unmount (then pause)
- *   - respecting the player's localStorage mute preference
- *   - live-updating volume when the mute button is toggled mid-play
- *   - swallowing autoplay rejections silently (the player has already
- *     completed a user gesture by tapping Begin on /awaken before any
- *     text overlay can render, so this should never reject in practice)
+ * Mount-scoped looping kora playback via a hidden <video> element.
  *
- * @param src URL of the audio asset (usually `KORA_AMBIENT` from story-data)
+ * Why <video> and not <audio>: iOS WebKit (Safari + every iOS Chrome /
+ * Firefox / Edge, all forced to WebKit by Apple) silences <audio>
+ * elements when the physical silent switch on the side of the phone is
+ * on. <video> elements with audio are treated as media playback and
+ * play through speakers regardless. The source asset is an mp4
+ * (kora-ambient.mp4 — AAC audio + a 1x1 still frame) so iOS WebKit
+ * unambiguously accepts it as video. Volume writes are still ignored
+ * on iOS (the element plays at hardware volume), so the JS fade-in is
+ * a desktop-only nicety — on iOS the kora just starts at full bed
+ * volume the moment play() succeeds. Acceptable.
+ *
+ * The hook handles:
+ *   - autoplay with a quiet ~1s volume fade-in on mount (desktop only)
+ *   - ~0.6s fade-out on unmount, then pause + detach
+ *   - respecting the player's localStorage mute preference
+ *   - live-updating muted state when the toolbar toggle flips it
+ *   - gesture-unlock retry: if the browser blocks autoplay (typical
+ *     after a page refresh), arms a one-time pointerdown/keydown
+ *     listener and retries play() on the next user gesture
+ *
+ * @param src URL of the kora mp4 (usually `KORA_AMBIENT` from story-data)
  * @param targetVolume Peak volume the fade-in approaches, 0..1. Default 0.35.
  */
 export function useKoraAmbient(
@@ -60,10 +71,24 @@ export function useKoraAmbient(
 
   useEffect(() => {
     if (!src || typeof window === "undefined") return;
-    const audio = new Audio(src);
-    audio.loop = true;
-    audio.preload = "auto";
-    audio.volume = 0;
+
+    // Hidden <video> element. iOS requires `playsInline` (without it,
+    // play() on iPhone tries to take over the screen in fullscreen
+    // mode). The element must be in the DOM for iOS to play it
+    // reliably; we place it offscreen rather than `display:none` since
+    // some WebKit builds refuse to play `display:none` media.
+    const video = document.createElement("video");
+    video.src = src;
+    video.loop = true;
+    video.preload = "auto";
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    video.crossOrigin = "anonymous";
+    video.volume = 0;
+    video.style.cssText =
+      "position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;";
+    document.body.appendChild(video);
 
     let fadeInId: ReturnType<typeof setInterval> | null = null;
     let fadeOutId: ReturnType<typeof setInterval> | null = null;
@@ -72,7 +97,7 @@ export function useKoraAmbient(
 
     const applyMutedState = () => {
       const muted = readKoraMuted();
-      audio.muted = muted;
+      video.muted = muted;
     };
     applyMutedState();
 
@@ -85,7 +110,11 @@ export function useKoraAmbient(
       const STEPS = 20;
       fadeInId = setInterval(() => {
         step++;
-        audio.volume = (peak * step) / STEPS;
+        // iOS Safari silently ignores volume writes, so this loop is
+        // effectively a no-op there (the element plays at hardware
+        // volume from frame 1). On desktop / Android the fade still
+        // swells in normally.
+        video.volume = (peak * step) / STEPS;
         if (step >= STEPS) {
           if (fadeInId) clearInterval(fadeInId);
           fadeInId = null;
@@ -97,11 +126,12 @@ export function useKoraAmbient(
       if (!unlockListener) return;
       document.removeEventListener("pointerdown", unlockListener);
       document.removeEventListener("keydown", unlockListener);
+      document.removeEventListener("touchend", unlockListener);
       unlockListener = null;
     };
 
     const tryPlay = () => {
-      audio.play().then(
+      video.play().then(
         () => {
           if (cancelled) return;
           removeUnlockListener();
@@ -111,15 +141,18 @@ export function useKoraAmbient(
           // Autoplay blocked — wait for the first user gesture. This is
           // the path a page refresh takes: hydration runs without any
           // recent gesture so the browser rejects play(). The next tap
-          // (Continue button, the screen anywhere, even a key press)
+          // (Continue button, anywhere on the screen, or a key press)
           // counts as the gesture, after which play() succeeds. The
-          // listener removes itself on success.
+          // listener removes itself on success. touchend is registered
+          // alongside pointerdown for older iOS WebKit builds that
+          // don't fire pointer events on tap.
           if (cancelled || unlockListener) return;
           unlockListener = () => {
             removeUnlockListener();
             if (!cancelled) tryPlay();
           };
           document.addEventListener("pointerdown", unlockListener, { once: true });
+          document.addEventListener("touchend", unlockListener, { once: true });
           document.addEventListener("keydown", unlockListener, { once: true });
         }
       );
@@ -133,18 +166,25 @@ export function useKoraAmbient(
       window.removeEventListener(KORA_MUTE_EVENT, onMuteChange);
       if (fadeInId) clearInterval(fadeInId);
 
-      // ~0.6s fade-out, then pause. If unmount fires before the fade-in
-      // finishes, we begin from whatever volume the audio is currently at.
-      const startVol = audio.volume;
+      // ~0.6s fade-out, then pause and detach. If unmount fires before
+      // the fade-in finishes, we begin from whatever volume the element
+      // is currently at. iOS ignores volume writes — there the pause
+      // happens at the end of the timer with no audible fade.
+      const startVol = video.volume;
       let step = 0;
       const STEPS = 12;
+      const detach = () => {
+        try { video.pause(); } catch { /* ignore */ }
+        video.removeAttribute("src");
+        try { video.load(); } catch { /* ignore */ }
+        if (video.parentNode) video.parentNode.removeChild(video);
+      };
       fadeOutId = setInterval(() => {
         step++;
-        audio.volume = startVol * (1 - step / STEPS);
+        video.volume = startVol * (1 - step / STEPS);
         if (step >= STEPS) {
           if (fadeOutId) clearInterval(fadeOutId);
-          audio.pause();
-          audio.src = "";
+          detach();
         }
       }, 50);
     };
