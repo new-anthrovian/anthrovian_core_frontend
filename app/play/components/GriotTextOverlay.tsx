@@ -88,7 +88,15 @@ export default function GriotTextOverlay({
       )}
       <div className="anthro-scrim" />
       <div className="absolute inset-0 overflow-y-auto">
-        <div className="mx-auto flex min-h-full max-w-2xl flex-col justify-end gap-4 px-6 pb-28 pt-24">
+        {/* justify-center vertically centers the paragraphs in the viewport
+            now that pagination keeps each page short — `justify-end` (the
+            previous value) was correct when the whole narration rendered
+            at once and filled the screen, but with 2 paragraphs per page
+            it left a large empty band at the top, especially on desktop.
+            `pb-32` keeps clearance for the page dots + Continue button
+            sitting absolutely at the bottom; `pt-24` keeps clearance for
+            corner controls. */}
+        <div className="mx-auto flex min-h-full max-w-2xl flex-col justify-center gap-4 px-6 pb-32 pt-24">
           {currentPage.map((p, i) => (
             <p
               // `pageIdx` in the key forces a remount on page change so
