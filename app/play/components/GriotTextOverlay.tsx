@@ -2,11 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { KORA_AMBIENT } from "@/lib/story-data";
+import { useKoraAmbient } from "@/lib/hooks/useKoraAmbient";
 
 /**
  * Renders griot narration (paragraphs split on \n\n) over a still poster.
- * Used for branch narration when a branch has no dedicated video.
- * Paragraphs fade in one-by-one; once settled, a quiet "Continue" appears.
+ * Used for branch narration when a branch has no dedicated video, AND for
+ * text-only scene setups (Iron Rod, Scene 9 Final Moral). Paragraphs fade
+ * in one-by-one; once settled, a quiet "Continue" appears.
+ *
+ * Audio: this is where the looping kora ambience plays. Video scenes
+ * have their own baked-in audio (griot VO + kora + SFX in the mp4);
+ * text-only scenes would be silent without this. The kora rides under
+ * the prose at low volume and respects the player's mute toggle.
  */
 export default function GriotTextOverlay({
   text,
@@ -23,6 +31,10 @@ export default function GriotTextOverlay({
 }) {
   const paragraphs = text.split("\n\n").filter(Boolean);
   const [settled, setSettled] = useState(false);
+
+  // Layer the kora bed under the text. Hook handles fade in/out, mute
+  // state, and silent autoplay-block fallback.
+  useKoraAmbient(KORA_AMBIENT);
 
   useEffect(() => {
     const total = paragraphs.length * paragraphDelayMs + 600;

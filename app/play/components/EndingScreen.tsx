@@ -6,6 +6,22 @@ import type { Ending, Variable } from "@/lib/types";
 import VideoStage from "./VideoStage";
 import VariableVisualizer from "./VariableVisualizer";
 import ReflectionCard from "./ReflectionCard";
+import { KORA_AMBIENT } from "@/lib/story-data";
+import { useKoraAmbient } from "@/lib/hooks/useKoraAmbient";
+
+/**
+ * Endings whose card reveal should run WITHOUT the kora bed. Per the
+ * script's audio direction:
+ *   - iron_lion           — "War drums alone. Notice what is absent:
+ *                            the kora. Its silence is part of this ending."
+ *   - mothers_hidden_lion — "A single female voice — unaccompanied, no
+ *                            instruments. An ancient lullaby in Mandinka."
+ * Every other ending gets the kora layer.
+ */
+const KORA_SUPPRESSED_ENDINGS: ReadonlySet<string> = new Set([
+  "iron_lion",
+  "mothers_hidden_lion",
+]);
 
 /**
  * Ending video -> gold title -> revealed variable symbols -> reflection
@@ -37,6 +53,12 @@ export default function EndingScreen({
   const [stage, setStage] = useState<"video" | "card">(
     ending.endingVideo ? "video" : "card"
   );
+
+  // Kora plays under the card stage (after the video if any). Skipped
+  // for the two endings the script designs around different audio.
+  const koraEligible =
+    stage === "card" && !KORA_SUPPRESSED_ENDINGS.has(ending.id);
+  useKoraAmbient(koraEligible ? KORA_AMBIENT : undefined);
 
   if (stage === "video" && ending.endingVideo) {
     return (
