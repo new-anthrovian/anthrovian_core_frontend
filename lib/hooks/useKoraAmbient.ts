@@ -68,6 +68,7 @@ export function useKoraAmbient(
     let fadeInId: ReturnType<typeof setInterval> | null = null;
     let fadeOutId: ReturnType<typeof setInterval> | null = null;
     let cancelled = false;
+    let unlockListener: (() => void) | null = null;
 
     const applyMutedState = () => {
       const muted = readKoraMuted();
@@ -78,32 +79,57 @@ export function useKoraAmbient(
     const onMuteChange = () => applyMutedState();
     window.addEventListener(KORA_MUTE_EVENT, onMuteChange);
 
-    // Try to start playback. If the browser blocks autoplay (shouldn't
-    // happen in normal flow — /awaken's Begin tap counts as the gesture)
-    // we silently give up; the silence is the same as before.
-    audio.play().then(
-      () => {
-        if (cancelled) return;
-        // Linear fade-in over ~1s (20 steps × 50ms).
-        const peak = Math.max(0, Math.min(1, targetRef.current));
-        let step = 0;
-        const STEPS = 20;
-        fadeInId = setInterval(() => {
-          step++;
-          audio.volume = (peak * step) / STEPS;
-          if (step >= STEPS) {
-            if (fadeInId) clearInterval(fadeInId);
-            fadeInId = null;
-          }
-        }, 50);
-      },
-      () => {
-        /* autoplay blocked — bail quietly */
-      }
-    );
+    const startFadeIn = () => {
+      const peak = Math.max(0, Math.min(1, targetRef.current));
+      let step = 0;
+      const STEPS = 20;
+      fadeInId = setInterval(() => {
+        step++;
+        audio.volume = (peak * step) / STEPS;
+        if (step >= STEPS) {
+          if (fadeInId) clearInterval(fadeInId);
+          fadeInId = null;
+        }
+      }, 50);
+    };
+
+    const removeUnlockListener = () => {
+      if (!unlockListener) return;
+      document.removeEventListener("pointerdown", unlockListener);
+      document.removeEventListener("keydown", unlockListener);
+      unlockListener = null;
+    };
+
+    const tryPlay = () => {
+      audio.play().then(
+        () => {
+          if (cancelled) return;
+          removeUnlockListener();
+          startFadeIn();
+        },
+        () => {
+          // Autoplay blocked — wait for the first user gesture. This is
+          // the path a page refresh takes: hydration runs without any
+          // recent gesture so the browser rejects play(). The next tap
+          // (Continue button, the screen anywhere, even a key press)
+          // counts as the gesture, after which play() succeeds. The
+          // listener removes itself on success.
+          if (cancelled || unlockListener) return;
+          unlockListener = () => {
+            removeUnlockListener();
+            if (!cancelled) tryPlay();
+          };
+          document.addEventListener("pointerdown", unlockListener, { once: true });
+          document.addEventListener("keydown", unlockListener, { once: true });
+        }
+      );
+    };
+
+    tryPlay();
 
     return () => {
       cancelled = true;
+      removeUnlockListener();
       window.removeEventListener(KORA_MUTE_EVENT, onMuteChange);
       if (fadeInId) clearInterval(fadeInId);
 
