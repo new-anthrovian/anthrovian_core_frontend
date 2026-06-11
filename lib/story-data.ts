@@ -55,7 +55,13 @@ export const PORTAL_POSTER = poster("portal-awaken.jpg");
  * kept low (~35%) by the components that play it so it doesn't compete
  * with the on-screen prose. Mutually muted by the player's kora toggle.
  */
-export const KORA_AMBIENT = v("kora-ambient.mp3");
+// Served as an mp4 (audio + 1x1 still frame) and played back via a
+// hidden <video> element. iOS WebKit (Safari + every iOS Chrome /
+// Firefox / Edge) silences <audio> tags when the physical silent
+// switch is on. <video> elements with audio are treated as media
+// playback and play through speakers regardless. The previous
+// kora-ambient.mp3 remains in R2 but is no longer referenced.
+export const KORA_AMBIENT = v("kora-ambient.mp4");
 
 /* ---------- Griot intro ---------- */
 
