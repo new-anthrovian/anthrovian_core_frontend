@@ -45,6 +45,18 @@ const poster = (name: string) => `${VIDEO_BASE}/posters/${name}?v=${ASSET_VERSIO
 export const PORTAL_VIDEO = v("portal-awaken.mp4");
 export const PORTAL_POSTER = poster("portal-awaken.jpg");
 
+/* ---------- Ambient audio ---------- */
+
+/**
+ * Short looping kora phrase (~18s, 96 kbps mono MP3, ~215 KB) used as
+ * the under-bed for moments where there is no video carrying its own
+ * baked-in audio: text-only setup beats (Iron Rod, Scene 9), text-only
+ * branch responses, and the post-video ending card reveal. Volume is
+ * kept low (~35%) by the components that play it so it doesn't compete
+ * with the on-screen prose. Mutually muted by the player's kora toggle.
+ */
+export const KORA_AMBIENT = v("kora-ambient.mp3");
+
 /* ---------- Griot intro ---------- */
 
 export const GRIOT_INTRO = {
