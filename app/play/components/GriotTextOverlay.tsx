@@ -1,20 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { KORA_AMBIENT } from "@/lib/story-data";
 import { useKoraAmbient } from "@/lib/hooks/useKoraAmbient";
 
+/** Paragraphs per page. Two keeps each screen scannable on mobile
+ *  without scrolling for typical griot-prose paragraph lengths. */
+const PARAGRAPHS_PER_PAGE = 2;
+
 /**
  * Renders griot narration (paragraphs split on \n\n) over a still poster.
- * Used for branch narration when a branch has no dedicated video, AND for
- * text-only scene setups (Iron Rod, Scene 9 Final Moral). Paragraphs fade
- * in one-by-one; once settled, a quiet "Continue" appears.
+ *
+ * Used for any text-only beat — Iron Rod setup, Scene 9 setup, branch
+ * responses where no video was delivered, the Amina teaser narration
+ * stage. The text is paginated into short pages so the player isn't
+ * looking at a long scroll on mobile: each page shows up to
+ * PARAGRAPHS_PER_PAGE paragraphs that fade in one-by-one, then the
+ * "Continue" button appears and advances either to the next page or,
+ * on the final page, to the next phase.
  *
  * Audio: this is where the looping kora ambience plays. Video scenes
  * have their own baked-in audio (griot VO + kora + SFX in the mp4);
  * text-only scenes would be silent without this. The kora rides under
- * the prose at low volume and respects the player's mute toggle.
+ * the prose at low volume, keeps playing across page advances (this
+ * component stays mounted), and respects the player's mute toggle.
  */
 export default function GriotTextOverlay({
   text,
@@ -29,18 +39,44 @@ export default function GriotTextOverlay({
   advanceLabel?: string;
   paragraphDelayMs?: number;
 }) {
-  const paragraphs = text.split("\n\n").filter(Boolean);
+  // Split the narration into pages of N paragraphs. Recomputed only when
+  // text changes — different scenes / branches mount fresh instances.
+  const pages = useMemo(() => {
+    const all = text.split("\n\n").filter(Boolean);
+    const grouped: string[][] = [];
+    for (let i = 0; i < all.length; i += PARAGRAPHS_PER_PAGE) {
+      grouped.push(all.slice(i, i + PARAGRAPHS_PER_PAGE));
+    }
+    return grouped.length > 0 ? grouped : [[]];
+  }, [text]);
+
+  const [pageIdx, setPageIdx] = useState(0);
   const [settled, setSettled] = useState(false);
 
+  const currentPage = pages[Math.min(pageIdx, pages.length - 1)];
+  const isLastPage = pageIdx >= pages.length - 1;
+
   // Layer the kora bed under the text. Hook handles fade in/out, mute
-  // state, and silent autoplay-block fallback.
+  // state, and silent autoplay-block fallback. Mount-scoped so it
+  // continues across page advances within this component.
   useKoraAmbient(KORA_AMBIENT);
 
+  // Reset the "settled" gate every time the page changes so the button
+  // stays hidden until the new page's paragraphs have all animated in.
   useEffect(() => {
-    const total = paragraphs.length * paragraphDelayMs + 600;
+    setSettled(false);
+    const total = currentPage.length * paragraphDelayMs + 600;
     const t = setTimeout(() => setSettled(true), total);
     return () => clearTimeout(t);
-  }, [paragraphs.length, paragraphDelayMs]);
+  }, [pageIdx, currentPage.length, paragraphDelayMs]);
+
+  const handleAdvance = () => {
+    if (isLastPage) {
+      onAdvance();
+    } else {
+      setPageIdx((i) => i + 1);
+    }
+  };
 
   return (
     <div className="absolute inset-0">
@@ -53,9 +89,11 @@ export default function GriotTextOverlay({
       <div className="anthro-scrim" />
       <div className="absolute inset-0 overflow-y-auto">
         <div className="mx-auto flex min-h-full max-w-2xl flex-col justify-end gap-4 px-6 pb-28 pt-24">
-          {paragraphs.map((p, i) => (
+          {currentPage.map((p, i) => (
             <p
-              key={i}
+              // `pageIdx` in the key forces a remount on page change so
+              // the griot-line fade-in animation re-runs cleanly.
+              key={`${pageIdx}-${i}`}
               className="anthro-serif griot-line text-[1.15rem] leading-relaxed text-[var(--cream)] md:text-[1.3rem]"
               style={{ animationDelay: `${i * paragraphDelayMs}ms` }}
             >
@@ -65,10 +103,29 @@ export default function GriotTextOverlay({
         </div>
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 flex justify-center pb-8">
+      <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-3 pb-8">
+        {/* Subtle page-position indicator. Only renders for multi-page
+            narration so single-page beats stay visually clean. */}
+        {pages.length > 1 && (
+          <div
+            className="flex gap-1.5"
+            aria-label={`Page ${pageIdx + 1} of ${pages.length}`}
+          >
+            {pages.map((_, i) => (
+              <span
+                key={i}
+                className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
+                  i <= pageIdx
+                    ? "bg-[var(--cream)]"
+                    : "bg-[rgba(246,223,182,0.25)]"
+                }`}
+              />
+            ))}
+          </div>
+        )}
         <motion.button
           type="button"
-          onClick={onAdvance}
+          onClick={handleAdvance}
           initial={false}
           animate={{ opacity: settled ? 1 : 0 }}
           transition={{ duration: 0.6 }}

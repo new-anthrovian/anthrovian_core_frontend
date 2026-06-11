@@ -484,7 +484,12 @@ export default function PlayClient() {
             key={`scene-text-${state.sceneIndex}-${replayNonce}`}
             text={scene.setupNarration}
             poster={scene.poster}
-            advanceLabel="The kora plays…"
+            // Default "Continue" label from GriotTextOverlay — matches
+            // the rest of the app (InscriptionInput, personalization).
+            // The kora is now actually audible under the text via
+            // useKoraAmbient, so the previous "The kora plays…" label
+            // (a script callback) no longer needs to do double duty
+            // as a status message.
             onAdvance={() => dispatch({ type: "SCENE_VIDEO_ENDED" })}
           />
         );
