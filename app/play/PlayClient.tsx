@@ -40,6 +40,7 @@ import InscriptionInput from "./components/InscriptionInput";
 import SpeedControl, { type PlaybackRate } from "./components/SpeedControl";
 import OrientationHint from "./components/OrientationHint";
 import ActOpenerBanner from "./components/ActOpenerBanner";
+import KoraMuteButton from "./components/KoraMuteButton";
 
 const RATE_KEY = "anthrovian-playback-rate";
 
@@ -692,9 +693,13 @@ export default function PlayClient() {
         </div>
       )}
 
-      {/* Google-Meet-style control cluster, bottom-right. */}
+      {/* Google-Meet-style control cluster, bottom-right. The kora mute
+          button shows whenever the cluster is visible — even if no kora
+          is currently playing, the toggle proactively affects any kora
+          that starts later (text overlays, ending card stage). */}
       {(showSpeed || showMenuButton) && !menuOpen && (
         <div className="absolute bottom-4 right-4 z-30 flex items-center gap-2.5">
+          <KoraMuteButton />
           {showSpeed && (
             <SpeedControl rate={playbackRate} onChange={handleSetRate} />
           )}
